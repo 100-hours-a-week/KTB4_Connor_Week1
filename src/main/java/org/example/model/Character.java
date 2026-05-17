@@ -14,13 +14,17 @@ import static lombok.AccessLevel.*;
 public class Character {
     private String name;
     private int hp;
-    private int attack = 0;
+    private int attack;
 
     public boolean isAlive() {
         return hp > 0;
     }
 
-    public void receiveDamage(int damage) {
-        hp = Math.max(0, hp - damage);
+    public int receiveDamage(int damage) {
+        int safeDamage = Math.max(0, damage);
+        int nextHp = Math.max(0, hp - safeDamage);
+        int actualDamage = hp - nextHp;
+        hp = nextHp;
+        return actualDamage;
     }
 }
