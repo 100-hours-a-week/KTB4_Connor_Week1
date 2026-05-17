@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class CharacterTest {
@@ -63,6 +64,31 @@ class CharacterTest {
                 () -> assertEquals(10, damage),
                 () -> assertEquals(0, character.hp()),
                 () -> assertFalse(character.isAlive())
+        );
+    }
+
+    @Test
+    void 이름은_비어_있을_수_없다() {
+        assertThrows(IllegalArgumentException.class, () -> Character.builder()
+                .name(" ")
+                .hp(10)
+                .attack(10)
+                .build());
+    }
+
+    @Test
+    void 체력과_공격력은_음수일_수_없다() {
+        assertAll(
+                () -> assertThrows(IllegalArgumentException.class, () -> Character.builder()
+                        .name("example")
+                        .hp(-1)
+                        .attack(10)
+                        .build()),
+                () -> assertThrows(IllegalArgumentException.class, () -> Character.builder()
+                        .name("example")
+                        .hp(10)
+                        .attack(-1)
+                        .build())
         );
     }
 }

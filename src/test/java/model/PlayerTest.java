@@ -1,8 +1,11 @@
 package model;
 
 import org.example.model.Mage;
+import org.example.model.Player;
 import org.example.model.Warrior;
 import org.junit.jupiter.api.Test;
+
+import java.util.Set;
 
 import static org.example.model.vo.BattleOption.ATTACK;
 import static org.example.model.vo.BattleOption.DEFEND;
@@ -10,6 +13,7 @@ import static org.example.model.vo.BattleOption.SKILL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class PlayerTest {
@@ -40,5 +44,12 @@ class PlayerTest {
                 () -> assertFalse(mage.canPerform(DEFEND)),
                 () -> assertTrue(mage.canPerform(SKILL))
         );
+    }
+
+    @Test
+    void 플레이어는_하나_이상의_행동을_가져야_한다() {
+        assertThrows(IllegalArgumentException.class,
+                () -> new Player("테스트", 100, 10, Set.of()) {
+                });
     }
 }
