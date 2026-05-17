@@ -6,6 +6,6 @@ public interface Option {
     String label();
 
     default String displayText() {
-            return number() + ". " + label();
-}
+        return number() + ". " + label();
+    }
 }

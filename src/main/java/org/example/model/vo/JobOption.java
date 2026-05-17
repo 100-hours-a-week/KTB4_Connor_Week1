@@ -5,7 +5,7 @@ import lombok.experimental.Accessors;
 
 @Getter
 @Accessors(fluent = true)
-public enum JobOption {
+public enum JobOption implements Option {
     WARRIOR(1, "Warrior (전사)"),
     MAGE(2, "Mage (메이지)");
 
