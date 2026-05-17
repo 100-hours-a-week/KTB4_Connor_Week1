@@ -6,6 +6,7 @@ public record BattleTurnResult(
         BattleOption playerAction,
         int monsterDamageTaken,
         int playerDamageTaken,
+        boolean monsterAttacked,
         boolean monsterDefeated,
         boolean playerDefeated
 ) {

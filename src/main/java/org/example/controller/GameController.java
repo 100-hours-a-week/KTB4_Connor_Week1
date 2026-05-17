@@ -126,9 +126,16 @@ public class GameController {
             case SKILL -> outputView.print(player.name() + "의 스킬! " + result.monsterDamageTaken() + "의 피해를 입혔습니다.");
         }
 
-        if (!result.monsterDefeated()) {
-            outputView.print(monster.name() + "의 공격! " + result.playerDamageTaken() + "의 피해를 입었습니다.");
+        if (result.monsterDefeated()) {
+            return;
         }
+
+        if (result.monsterAttacked()) {
+            outputView.print(monster.name() + "의 공격! " + result.playerDamageTaken() + "의 피해를 입었습니다.");
+            return;
+        }
+
+        outputView.print(monster.name() + "가 공격하지 않았습니다.");
     }
 
     private String formatJobDescription(Player player) {

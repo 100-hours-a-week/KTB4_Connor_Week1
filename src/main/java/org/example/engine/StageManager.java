@@ -8,6 +8,7 @@ public class StageManager {
     private static final int BASE_ATTACK = 20;
     private static final int HP_INCREMENT = 10;
     private static final int ATTACK_INCREMENT = 5;
+    private static final int ATTACK_CHANCE = 70;
 
     public Monster createMonster(int stage) {
         if (stage < 1) {
@@ -16,6 +17,6 @@ public class StageManager {
 
         int hp = BASE_HP + (stage - 1) * HP_INCREMENT;
         int attack = BASE_ATTACK + (stage - 1) * ATTACK_INCREMENT;
-        return new Monster(MONSTER_NAME + " " + stage, stage, hp, attack);
+        return new Monster(MONSTER_NAME + " " + stage, stage, hp, attack, ATTACK_CHANCE);
     }
 }

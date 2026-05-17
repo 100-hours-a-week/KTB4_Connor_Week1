@@ -19,6 +19,7 @@ class StageManagerTest {
         assertAll(
                 () -> assertEquals(40, stageOneMonster.hp()),
                 () -> assertEquals(20, stageOneMonster.attack()),
+                () -> assertEquals(70, stageOneMonster.attackChance()),
                 () -> assertEquals(60, stageThreeMonster.hp()),
                 () -> assertEquals(30, stageThreeMonster.attack()),
                 () -> assertEquals(3, stageThreeMonster.stage())
