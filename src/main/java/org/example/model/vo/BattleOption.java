@@ -1,6 +1,6 @@
 package org.example.model.vo;
 
-public enum BattleOption implements Option {
+public enum BattleOption {
     ATTACK(1, "공격"),
     DEFEND(2, "방어"),
     SKILL(3, "스킬");
@@ -13,12 +13,10 @@ public enum BattleOption implements Option {
         this.label = label;
     }
 
-    @Override
     public int number() {
         return number;
     }
 
-    @Override
     public String label() {
         return label;
     }

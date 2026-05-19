@@ -9,11 +9,12 @@ import org.example.model.Monster;
 import org.example.model.Player;
 import org.example.model.vo.BattleOption;
 import org.example.model.vo.JobOption;
-import org.example.model.vo.Option;
 import org.example.view.in.InputView;
 import org.example.view.out.OutputView;
 
 import java.util.Arrays;
+import java.util.function.Function;
+import java.util.function.ToIntFunction;
 
 public class GameController {
     private static final String INVALID_INPUT_MESSAGE = "잘못된 입력입니다.";
@@ -82,26 +83,29 @@ public class GameController {
     }
 
     private GameMenuOption selectMenuOption() {
-        return promptSelection("메인 메뉴", GameMenuOption.values());
+        return promptSelection("메인 메뉴", GameMenuOption.values(), GameMenuOption::number, GameMenuOption::label);
     }
 
     private JobOption selectJobOption() {
-        return promptSelection("직업 선택", JobOption.values());
+        return promptSelection("직업 선택", JobOption.values(), JobOption::number, JobOption::label);
     }
 
     BattleOption selectBattleOption(final Player player) {
         final BattleOption[] availableOptions = Arrays.stream(BattleOption.values())
                 .filter(player::canPerform)
                 .toArray(BattleOption[]::new);
-        return promptSelection("행동 선택", availableOptions);
+        return promptSelection("행동 선택", availableOptions, BattleOption::number, BattleOption::label);
     }
 
-    private <T extends Option> T promptSelection(final String title, final T[] options) {
+    private <T> T promptSelection(final String title,
+                                  final T[] options,
+                                  final ToIntFunction<T> numberExtractor,
+                                  final Function<T, String> labelExtractor) {
         while (true) {
-            printOptions(title, options);
+            printOptions(title, options, numberExtractor, labelExtractor);
 
             try {
-                return findOption(options, inputView.inputNumber());
+                return findOption(options, inputView.inputNumber(), numberExtractor);
             } catch (IllegalArgumentException e) {
                 if ("입력이 없습니다.".equals(e.getMessage())) {
                     throw e;
@@ -115,16 +119,21 @@ public class GameController {
         }
     }
 
-    private <T extends Option> void printOptions(final String title, final T[] options) {
+    private <T> void printOptions(final String title,
+                                  final T[] options,
+                                  final ToIntFunction<T> numberExtractor,
+                                  final Function<T, String> labelExtractor) {
         outputView.print(title);
         for (T option : options) {
-            outputView.print(option.displayText());
+            outputView.print(numberExtractor.applyAsInt(option) + ". " + labelExtractor.apply(option));
         }
     }
 
-    private <T extends Option> T findOption(final T[] options, final int input) {
+    private <T> T findOption(final T[] options,
+                             final int input,
+                             final ToIntFunction<T> numberExtractor) {
         return Arrays.stream(options)
-                .filter(option -> option.number() == input)
+                .filter(option -> numberExtractor.applyAsInt(option) == input)
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("선택할 수 없는 옵션입니다."));
     }
