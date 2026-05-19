@@ -21,7 +21,7 @@ public class Character {
         this.attack = attack;
     }
 
-    protected Character(CharacterBuilder<?, ?> builder) {
+    public Character(CharacterBuilder<?, ?> builder) {
         this(builder.name, builder.hp, builder.attack);
     }
 
