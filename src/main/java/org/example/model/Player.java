@@ -14,13 +14,6 @@ public abstract class Player extends Character {
     private final int maxHp;
     private final Set<BattleOption> availableBattleOptions;
 
-    public static Player from(final JobOption jobOption) {
-        return switch (jobOption) {
-            case WARRIOR -> new Warrior();
-            case MAGE -> new Mage();
-        };
-    }
-
     protected Player(String name, int hp, int attack, Set<BattleOption> availableBattleOptions) {
         super(name, hp, attack);
         if (availableBattleOptions == null || availableBattleOptions.isEmpty()) {
@@ -28,6 +21,13 @@ public abstract class Player extends Character {
         }
         this.maxHp = hp;
         this.availableBattleOptions = Set.copyOf(EnumSet.copyOf(availableBattleOptions));
+    }
+
+    public static Player from(final JobOption jobOption) {
+        return switch (jobOption) {
+            case WARRIOR -> new Warrior();
+            case MAGE -> new Mage();
+        };
     }
 
     public boolean canPerform(BattleOption battleOption) {

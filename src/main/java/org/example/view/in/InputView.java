@@ -3,77 +3,67 @@ package org.example.view.in;
 import org.example.dto.GameMenuOption;
 import org.example.model.vo.BattleOption;
 import org.example.model.vo.JobOption;
+import org.example.model.vo.Option;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.StringJoiner;
-
-import static org.example.dto.GameMenuOption.EXIT;
-import static org.example.dto.GameMenuOption.PLAY;
-import static org.example.model.vo.JobOption.MAGE;
-import static org.example.model.vo.JobOption.WARRIOR;
+import java.util.Objects;
+import java.util.Scanner;
 
 public class InputView {
-    private static final BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
+    private final Scanner scanner;
+    private final boolean finiteInput;
 
-    private static String readLine() {
-        try {
-            return READER.readLine();
-        } catch (IOException e) {
-            throw new IllegalArgumentException(e);
-        }
+    public InputView() {
+        this(new Scanner(System.in), false);
+    }
+
+    public InputView(final Scanner scanner) {
+        this(scanner, true);
+    }
+
+    private InputView(final Scanner scanner, final boolean finiteInput) {
+        this.scanner = Objects.requireNonNull(scanner);
+        this.finiteInput = finiteInput;
     }
 
     public GameMenuOption inputMenuOption() {
-        StringJoiner joiner = new StringJoiner("\n");
-        joiner.add("메뉴를 선택하세요.");
-        for (GameMenuOption option : GameMenuOption.values()) {
-            joiner.add(option.number() + ". " + option.label());
-        }
-        System.out.println(joiner);
-
-        final int input = Integer.parseInt(readLine());
-
-        return switch (input) {
-            case 1 -> PLAY;
-            case 2 -> EXIT;
-            default -> throw new IllegalStateException("1 또는 2를 입력해야 합니다.");
-        };
+        return findOption(GameMenuOption.values(), inputNumber());
     }
 
     public JobOption inputJobOption() {
-        StringJoiner joiner = new StringJoiner("\n");
-        joiner.add("직업 선택하세요.");
-        for (JobOption option : JobOption.values()) {
-            joiner.add(option.number() + ". " + option.label());
-        }
-        System.out.println(joiner);
-
-        final int input = Integer.parseInt(readLine());
-
-        return switch (input) {
-            case 1 -> WARRIOR;
-            case 2 -> MAGE;
-            default -> throw new IllegalStateException("1 또는 2를 입력해야 합니다.");
-        };
+        return findOption(JobOption.values(), inputNumber());
     }
 
     public BattleOption inputBattleOption() {
-        StringJoiner joiner = new StringJoiner("\n");
-        joiner.add("행동을 선택하세요.");
-        for (BattleOption option : BattleOption.values()) {
-            joiner.add(option.number() + ". " + option.label());
+        return findOption(BattleOption.values(), inputNumber());
+    }
+
+    public int inputNumber() {
+        try {
+            return Integer.parseInt(readLine());
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("숫자를 입력해야 합니다.", e);
         }
-        System.out.println(joiner);
+    }
 
-        final int input = Integer.parseInt(readLine());
+    public boolean canRetry() {
+        return !finiteInput || scanner.hasNextLine();
+    }
 
-        return switch (input) {
-            case 1 -> BattleOption.ATTACK;
-            case 2 -> BattleOption.DEFEND;
-            case 3 -> BattleOption.SKILL;
-            default -> throw new IllegalStateException("1, 2 또는 3을 입력해야 합니다.");
-        };
+    private String readLine() {
+        if (!scanner.hasNextLine()) {
+            throw new IllegalArgumentException("입력이 없습니다.");
+        }
+
+        return scanner.nextLine();
+    }
+
+    private <T extends Option> T findOption(final T[] options, final int input) {
+        for (T option : options) {
+            if (option.number() == input) {
+                return option;
+            }
+        }
+
+        throw new IllegalArgumentException("선택할 수 없는 옵션입니다.");
     }
 }
