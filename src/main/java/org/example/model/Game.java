@@ -1,5 +1,7 @@
 package org.example.model;
 
+import lombok.Getter;
+import lombok.experimental.Accessors;
 import org.example.engine.BattleEngine;
 import org.example.engine.BattleTurnResult;
 import org.example.engine.StageManager;
@@ -7,6 +9,8 @@ import org.example.model.vo.BattleOption;
 
 import java.util.Objects;
 
+@Getter
+@Accessors(fluent = true)
 public class Game {
     private final Player player;
     private final StageManager stageManager;
@@ -23,10 +27,6 @@ public class Game {
         this.battleEngine = Objects.requireNonNull(battleEngine);
         this.stage = 1;
         this.monster = stageManager.createMonster(stage);
-    }
-
-    public static Game start(final Player player) {
-        return start(player, new StageManager(), new BattleEngine());
     }
 
     public static Game start(final Player player,
@@ -62,17 +62,5 @@ public class Game {
 
         stage++;
         monster = stageManager.createMonster(stage);
-    }
-
-    public Player player() {
-        return player;
-    }
-
-    public Monster monster() {
-        return monster;
-    }
-
-    public int stage() {
-        return stage;
     }
 }
