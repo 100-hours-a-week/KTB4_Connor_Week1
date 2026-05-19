@@ -8,17 +8,10 @@ import org.example.model.Game;
 import org.example.model.Monster;
 import org.example.model.Player;
 import org.example.model.vo.BattleOption;
-import org.example.model.vo.JobOption;
 import org.example.view.in.InputView;
 import org.example.view.out.OutputView;
 
-import java.util.Arrays;
-import java.util.function.Function;
-import java.util.function.ToIntFunction;
-
 public class GameController {
-    private static final String INVALID_INPUT_MESSAGE = "잘못된 입력입니다.";
-
     private final InputView inputView;
     private final OutputView outputView;
     private final BattleEngine battleEngine;
@@ -40,28 +33,21 @@ public class GameController {
     }
 
     public void run() {
-        try {
-            final GameMenuOption menu = selectMenuOption();
-
-            switch (menu) {
-                case PLAY -> play();
-                case EXIT -> outputView.print("게임을 종료합니다.");
-            }
-        } catch (IllegalArgumentException ignored) {
-            // 더 이상 읽을 입력이 없으면 조용히 종료한다.
+        final Game game = initGame();
+        if (game == null) {
+            return;
         }
-    }
 
-    private void play() {
-        final Player player = Player.from(selectJobOption());
-        final Game game = Game.start(player, stageManager, battleEngine);
-
-        outputView.print(player.name() + "를 선택했습니다.");
-
-        while (game.isRunning()) {
+        while (!game.isOver()) {
             outputView.print(game.stage() + " 스테이지를 시작합니다.");
 
-            battle(game);
+            while (game.isStageInProgress()) {
+                final Player player = game.player();
+                final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
+
+                final BattleTurnResult result = game.playTurn(option);
+                printBattleResult(player, game.monster(), result);
+            }
 
             if (!game.player().isAlive()) {
                 outputView.print("플레이어가 패배했습니다. 게임 오버!");
@@ -73,76 +59,19 @@ public class GameController {
         }
     }
 
-    private void battle(final Game game) {
-        while (game.isStageInProgress()) {
-            printStatus(game.player(), game.monster());
+    private Game initGame() {
+        final GameMenuOption menu = inputView.inputMenuOption();
 
-            final BattleTurnResult result = game.playTurn(selectBattleOption(game.player()));
-            printBattleResult(game.player(), game.monster(), result);
-        }
-    }
-
-    private GameMenuOption selectMenuOption() {
-        return promptSelection("메인 메뉴", GameMenuOption.values(), GameMenuOption::number, GameMenuOption::label);
-    }
-
-    private JobOption selectJobOption() {
-        return promptSelection("직업 선택", JobOption.values(), JobOption::number, JobOption::label);
-    }
-
-    BattleOption selectBattleOption(final Player player) {
-        final BattleOption[] availableOptions = Arrays.stream(BattleOption.values())
-                .filter(player::canPerform)
-                .toArray(BattleOption[]::new);
-        return promptSelection("행동 선택", availableOptions, BattleOption::number, BattleOption::label);
-    }
-
-    private <T> T promptSelection(final String title,
-                                  final T[] options,
-                                  final ToIntFunction<T> numberExtractor,
-                                  final Function<T, String> labelExtractor) {
-        while (true) {
-            printOptions(title, options, numberExtractor, labelExtractor);
-
-            try {
-                return findOption(options, inputView.inputNumber(), numberExtractor);
-            } catch (IllegalArgumentException e) {
-                if ("입력이 없습니다.".equals(e.getMessage())) {
-                    throw e;
-                }
-
-                outputView.print(INVALID_INPUT_MESSAGE);
-                if (!inputView.canRetry()) {
-                    throw new IllegalArgumentException("입력이 없습니다.");
-                }
+        return switch (menu) {
+            case PLAY -> {
+                final Player player = Player.from(inputView.inputJobOption());
+                yield Game.start(player, stageManager, battleEngine);
             }
-        }
-    }
-
-    private <T> void printOptions(final String title,
-                                  final T[] options,
-                                  final ToIntFunction<T> numberExtractor,
-                                  final Function<T, String> labelExtractor) {
-        outputView.print(title);
-        for (T option : options) {
-            outputView.print(numberExtractor.applyAsInt(option) + ". " + labelExtractor.apply(option));
-        }
-    }
-
-    private <T> T findOption(final T[] options,
-                             final int input,
-                             final ToIntFunction<T> numberExtractor) {
-        return Arrays.stream(options)
-                .filter(option -> numberExtractor.applyAsInt(option) == input)
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("선택할 수 없는 옵션입니다."));
-    }
-
-    private void printStatus(final Player player, final Monster monster) {
-        outputView.print("====================");
-        outputView.print(player.name() + " HP: " + player.hp() + "/" + player.maxHp());
-        outputView.print(monster.name() + " HP: " + monster.hp());
-        outputView.print("====================");
+            case EXIT -> {
+                outputView.print("게임을 종료합니다.");
+                yield null;
+            }
+        };
     }
 
     private void printBattleResult(final Player player, final Monster monster, final BattleTurnResult result) {
@@ -162,5 +91,9 @@ public class GameController {
         }
 
         outputView.print(monster.name() + "가 공격하지 않았습니다.");
+        outputView.print("====================");
+        outputView.print(player.name() + " HP: " + player.hp() + "/" + player.maxHp());
+        outputView.print(monster.name() + " HP: " + monster.hp());
+        outputView.print("====================");
     }
 }

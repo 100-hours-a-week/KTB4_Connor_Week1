@@ -43,8 +43,8 @@ public class Game {
         return battleEngine.resolveTurn(player, monster, battleOption);
     }
 
-    public boolean isRunning() {
-        return player.isAlive();
+    public boolean isOver() {
+        return !player.isAlive();
     }
 
     public boolean isStageInProgress() {

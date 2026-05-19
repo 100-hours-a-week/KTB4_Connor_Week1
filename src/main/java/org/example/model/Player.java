@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 import org.example.model.vo.BattleOption;
 import org.example.model.vo.JobOption;
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -32,6 +33,10 @@ public abstract class Player extends Character {
 
     public boolean canPerform(BattleOption battleOption) {
         return battleOption != null && availableBattleOptions.contains(battleOption);
+    }
+
+    public Set<BattleOption> availableBattleOptions() {
+        return Collections.unmodifiableSet(availableBattleOptions);
     }
 
     public int damageFor(BattleOption battleOption) {
