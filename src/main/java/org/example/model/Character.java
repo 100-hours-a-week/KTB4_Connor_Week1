@@ -1,40 +1,39 @@
 package org.example.model;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import lombok.experimental.SuperBuilder;
 
-@SuperBuilder
 @Getter
 @Accessors(fluent = true)
-public class Character {
-    private String name;
+@Builder
+public class Character implements Attackable {
+    private final String name;
     private int hp;
-    private int attack;
+    private final int attack;
 
     public Character(String name, int hp, int attack) {
         validateName(name);
-        validateNonNegative(hp, "체력");
-        validateNonNegative(attack, "공격력");
+        validateHp(hp);
+        validateAttack(attack);
         this.name = name;
         this.hp = hp;
         this.attack = attack;
     }
 
-    public Character(CharacterBuilder<?, ?> builder) {
-        this(builder.name, builder.hp, builder.attack);
+    public int attack(final AttackStrategy strategy) {
+        if (strategy.attackable()) {
+            return attack;
+        }
+        return 0;
+    }
+
+    public void damage(int attack) {
+        hp = Math.max(0, hp - attack);
     }
 
     public boolean isAlive() {
         return hp > 0;
-    }
-
-    public int receiveDamage(int damage) {
-        int safeDamage = Math.max(0, damage);
-        int nextHp = Math.max(0, hp - safeDamage);
-        int actualDamage = hp - nextHp;
-        hp = nextHp;
-        return actualDamage;
     }
 
     private void validateName(String name) {
@@ -43,9 +42,15 @@ public class Character {
         }
     }
 
-    private void validateNonNegative(int value, String fieldName) {
-        if (value < 0) {
-            throw new IllegalArgumentException(fieldName + "은 음수일 수 없습니다.");
+    private void validateHp(int hp) {
+        if (hp < 0) {
+            throw new IllegalArgumentException("체력은 음수일 수 없습니다.");
+        }
+    }
+
+    private void validateAttack(int attack) {
+        if (attack < 0) {
+            throw new IllegalArgumentException("공격력은 음수일 수 없습니다.");
         }
     }
 }

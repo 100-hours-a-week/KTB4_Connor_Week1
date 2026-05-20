@@ -4,6 +4,8 @@ import org.example.engine.BattleTurnResult;
 import org.example.engine.StageManager;
 import org.junit.jupiter.api.Test;
 
+import java.util.Set;
+
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.example.model.vo.BattleOption.ATTACK;
 import static org.example.model.vo.BattleOption.SKILL;
@@ -24,7 +26,6 @@ class GameTest {
                 () -> assertEquals(1, game.stage().value()),
                 () -> assertEquals(1, game.monster().stage()),
                 () -> assertNotNull(game.player()),
-                () -> assertFalse(game.isOver()),
                 () -> assertFalse(game.isOver())
         );
     }
@@ -36,17 +37,20 @@ class GameTest {
         BattleTurnResult result = game.playTurn(ATTACK);
 
         assertAll(
-                () -> assertEquals(25, result.monsterDamageTaken()),
-                () -> assertFalse(result.monsterAttacked()),
-                () -> assertEquals(15, game.monster().hp()),
-                () -> assertEquals(180, game.player().hp())
+                () -> assertEquals(ATTACK, result.playerAction()),
+                () -> assertTrue(Set.of(0, 25).contains(result.monsterDamageTaken())),
+                () -> assertTrue(Set.of(0, 20).contains(result.playerDamageTaken())),
+                () -> assertEquals(result.playerDamageTaken() > 0, result.monsterAttacked()),
+                () -> assertFalse(result.monsterDefeated()),
+                () -> assertEquals(40 - result.monsterDamageTaken(), game.monster().hp()),
+                () -> assertEquals(180 - result.playerDamageTaken(), game.player().hp())
         );
     }
 
     @Test
     void 스테이지를_클리어하면_다음_스테이지로_진행한다() {
         Game game = game();
-        game.monster().receiveDamage(game.monster().hp());
+        game.monster().damage(game.monster().hp());
 
         game.proceedNextStage();
 
@@ -73,7 +77,7 @@ class GameTest {
     void 플레이어가_죽으면_게임이_종료된다() {
         Game game = game();
 
-        game.player().receiveDamage(game.player().hp());
+        game.player().damage(game.player().hp());
 
         assertTrue(game.isOver());
     }

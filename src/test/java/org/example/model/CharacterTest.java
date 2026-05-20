@@ -37,10 +37,9 @@ class CharacterTest {
                 .attack(10)
                 .build();
 
-        int damage = character.receiveDamage(12);
+        character.damage(12);
 
         assertAll(
-                () -> assertEquals(12, damage),
                 () -> assertEquals(18, character.hp()),
                 () -> assertTrue(character.isAlive())
         );
@@ -54,13 +53,34 @@ class CharacterTest {
                 .attack(10)
                 .build();
 
-        int damage = character.receiveDamage(20);
+        character.damage(20);
 
         assertAll(
-                () -> assertEquals(10, damage),
                 () -> assertEquals(0, character.hp()),
                 () -> assertFalse(character.isAlive())
         );
+    }
+
+    @Test
+    void 공격_전략이_성공하면_공격력을_반환한다() {
+        Character character = Character.builder()
+                .name("example")
+                .hp(30)
+                .attack(10)
+                .build();
+
+        assertEquals(10, character.attack(() -> true));
+    }
+
+    @Test
+    void 공격_전략이_실패하면_0을_반환한다() {
+        Character character = Character.builder()
+                .name("example")
+                .hp(30)
+                .attack(10)
+                .build();
+
+        assertEquals(0, character.attack(() -> false));
     }
 
     @Test

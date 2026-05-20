@@ -3,9 +3,7 @@ package org.example.controller;
 import org.example.dto.GameMenuOption;
 import org.example.engine.BattleTurnResult;
 import org.example.engine.StageManager;
-import org.example.model.Game;
-import org.example.model.Monster;
-import org.example.model.Player;
+import org.example.model.*;
 import org.example.model.vo.BattleOption;
 import org.example.view.in.InputView;
 import org.example.view.out.OutputView;
@@ -57,7 +55,6 @@ public class GameController {
 
     private Game initGame() {
         final GameMenuOption menu = inputView.inputMenuOption();
-
         return switch (menu) {
             case PLAY -> {
                 final Player player = Player.from(inputView.inputJobOption());

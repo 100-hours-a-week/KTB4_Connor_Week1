@@ -21,6 +21,7 @@ public class Monster extends Character {
         this.attackChance = attackChance;
     }
 
+
     public boolean shouldAttack(int randomValue) {
         return randomValue < attackChance;
     }

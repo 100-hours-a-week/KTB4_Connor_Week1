@@ -17,6 +17,7 @@ public class Game {
     private final Random random;
     private final Stage stage;
     private Monster monster;
+    private final AttackStrategy attackStrategy;
 
     private Game(final Player player,
                  final StageManager stageManager) {
@@ -25,6 +26,7 @@ public class Game {
         this.random = new Random();
         this.stage = new Stage(1);
         this.monster = stageManager.createMonster(stage);
+        this.attackStrategy = new RandomAttackStrategy();
     }
 
     public static Game start(final Player player,
@@ -36,22 +38,15 @@ public class Game {
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
-
-        int monsterDamageTaken = monster.receiveDamage(player.damageFor(battleOption));
+        int monsterDamageTaken = player.attack(attackStrategy);
+        monster.damage(monsterDamageTaken);
 
         if (!monster.isAlive()) {
             return new BattleTurnResult(battleOption, monsterDamageTaken, 0, false, true, false);
         }
-
-        boolean monsterAttacked = monster.shouldAttack(random.nextInt(100));
-        int playerDamageTaken = 0;
-
-        if (monsterAttacked) {
-            int monsterDamage = battleOption == BattleOption.DEFEND
-                    ? Math.max(1, monster.attack() / 2)
-                    : monster.attack();
-            playerDamageTaken = player.receiveDamage(monsterDamage);
-        }
+        int playerDamageTaken = monster.attack(attackStrategy);
+        player.damage(playerDamageTaken);
+        boolean monsterAttacked = playerDamageTaken > 0;
 
         return new BattleTurnResult(battleOption,
                 monsterDamageTaken,
