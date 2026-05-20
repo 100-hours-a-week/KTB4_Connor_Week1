@@ -1,7 +1,4 @@
-package org.example.engine;
-
-import org.example.model.Monster;
-import org.example.model.Stage;
+package org.example.model;
 
 public class MonsterFactory {
     private static final String MONSTER_NAME = "Lv.%d 고블린";
