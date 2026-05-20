@@ -16,11 +16,19 @@ import static org.example.model.vo.JobOption.MAGE;
 import static org.example.model.vo.JobOption.WARRIOR;
 
 public class InputView {
-    private static final BufferedReader READER = new BufferedReader(new InputStreamReader(System.in));
+    private final BufferedReader reader;
 
-    private static String readLine() {
+    public InputView() {
+        this(new BufferedReader(new InputStreamReader(System.in)));
+    }
+
+    public InputView(final BufferedReader reader) {
+        this.reader = reader;
+    }
+
+    private String readLine() {
         try {
-            return READER.readLine();
+            return reader.readLine();
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
