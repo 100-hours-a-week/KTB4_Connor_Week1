@@ -16,8 +16,8 @@ public class Game {
     private final StageManager stageManager;
     private final Random random;
     private final Stage stage;
-    private Monster monster;
     private final AttackStrategy attackStrategy;
+    private Monster monster;
 
     private Game(final Player player,
                  final StageManager stageManager) {
@@ -46,12 +46,11 @@ public class Game {
         }
         int playerDamageTaken = monster.attack(attackStrategy);
         player.damage(playerDamageTaken);
-        boolean monsterAttacked = playerDamageTaken > 0;
 
         return new BattleTurnResult(battleOption,
                 monsterDamageTaken,
                 playerDamageTaken,
-                monsterAttacked,
+                playerDamageTaken > 0,
                 false,
                 !player.isAlive()
         );
@@ -61,7 +60,7 @@ public class Game {
         return !player.isAlive() && monster.isAlive();
     }
 
-    public void proceedNextStage() {
+    public void nextStage() {
         if (monster.isAlive()) {
             throw new IllegalStateException("스테이지를 클리어해야 다음 스테이지로 이동할 수 있습니다.");
         }

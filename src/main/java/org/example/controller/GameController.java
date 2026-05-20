@@ -49,7 +49,7 @@ public class GameController {
             }
 
             outputView.print(game.monster().name() + "를 처치했습니다.");
-            game.proceedNextStage();
+            game.nextStage();
         }
     }
 
