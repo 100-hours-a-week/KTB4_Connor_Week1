@@ -1,7 +1,6 @@
 package org.example.controller;
 
 import org.example.dto.GameMenuOption;
-import org.example.engine.BattleEngine;
 import org.example.engine.BattleTurnResult;
 import org.example.engine.StageManager;
 import org.example.model.Game;
@@ -14,21 +13,18 @@ import org.example.view.out.OutputView;
 public class GameController {
     private final InputView inputView;
     private final OutputView outputView;
-    private final BattleEngine battleEngine;
     private final StageManager stageManager;
 
     public GameController(final InputView inputView,
                           final OutputView outputView) {
-        this(inputView, outputView, new BattleEngine(), new StageManager());
+        this(inputView, outputView, new StageManager());
     }
 
     public GameController(final InputView inputView,
                           final OutputView outputView,
-                          final BattleEngine battleEngine,
                           final StageManager stageManager) {
         this.inputView = inputView;
         this.outputView = outputView;
-        this.battleEngine = battleEngine;
         this.stageManager = stageManager;
     }
 
@@ -39,7 +35,7 @@ public class GameController {
         }
 
         while (!game.isOver()) {
-            outputView.print(game.stage() + " 스테이지를 시작합니다.");
+            outputView.print(game.stage().value() + " 스테이지를 시작합니다.");
 
             while (game.isStageInProgress()) {
                 final Player player = game.player();
@@ -65,7 +61,7 @@ public class GameController {
         return switch (menu) {
             case PLAY -> {
                 final Player player = Player.from(inputView.inputJobOption());
-                yield Game.start(player, stageManager, battleEngine);
+                yield Game.start(player, stageManager);
             }
             case EXIT -> {
                 outputView.print("게임을 종료합니다.");

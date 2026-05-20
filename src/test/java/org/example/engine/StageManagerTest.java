@@ -1,6 +1,5 @@
-package engine;
+package org.example.engine;
 
-import org.example.engine.StageManager;
 import org.example.model.Monster;
 import org.example.model.Stage;
 import org.junit.jupiter.api.Test;

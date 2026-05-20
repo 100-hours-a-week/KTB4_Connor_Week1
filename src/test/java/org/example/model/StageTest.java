@@ -1,6 +1,5 @@
-package model;
+package org.example.model;
 
-import org.example.model.Stage;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;

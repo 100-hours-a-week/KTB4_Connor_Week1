@@ -1,13 +1,9 @@
-package model;
+package org.example.model;
 
-import org.example.model.Character;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.*;
 
 class CharacterTest {
 
@@ -69,26 +65,15 @@ class CharacterTest {
 
     @Test
     void 이름은_비어_있을_수_없다() {
-        assertThrows(IllegalArgumentException.class, () -> Character.builder()
-                .name(" ")
-                .hp(10)
-                .attack(10)
-                .build());
+        assertThatThrownBy(() -> Character.builder().name("").hp(10).attack(10).build())
+                .hasMessage("이름은 비어 있을 수 없습니다.");
     }
 
     @Test
     void 체력과_공격력은_음수일_수_없다() {
         assertAll(
-                () -> assertThrows(IllegalArgumentException.class, () -> Character.builder()
-                        .name("example")
-                        .hp(-1)
-                        .attack(10)
-                        .build()),
-                () -> assertThrows(IllegalArgumentException.class, () -> Character.builder()
-                        .name("example")
-                        .hp(10)
-                        .attack(-1)
-                        .build())
+                () -> assertThatThrownBy(() -> Character.builder().name("example").hp(-1).attack(10).build()),
+                () -> assertThatThrownBy(() -> Character.builder().name("example").hp(10).attack(-1).build())
         );
     }
 }

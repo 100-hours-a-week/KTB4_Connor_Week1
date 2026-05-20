@@ -1,10 +1,9 @@
 package org.example.controller;
 
 import org.example.dto.GameMenuOption;
-import org.example.engine.BattleEngine;
-import org.example.engine.BattleTurnResult;
+import org.example.engine.StageManager;
 import org.example.model.Monster;
-import org.example.model.Player;
+import org.example.model.Stage;
 import org.example.model.vo.BattleOption;
 import org.example.model.vo.JobOption;
 import org.example.view.in.InputView;
@@ -32,14 +31,16 @@ class GameControllerTest {
     void 종료를_선택하면_종료_메시지를_출력한다() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         FakeInputView inputView = new FakeInputView(EXIT, WARRIOR, ATTACK);
-        GameController controller = controllerWith(inputView, output, new PlayerDefeatingBattleEngine());
+        GameController controller = controllerWith(inputView, output);
 
         controller.run();
 
         String message = output.toString();
         assertAll(
                 () -> assertTrue(message.contains("게임을 종료합니다.")),
-                () -> assertFalse(message.contains("스테이지를 시작합니다."))
+                () -> assertFalse(message.contains("스테이지를 시작합니다.")),
+                () -> assertFalse(inputView.jobOptionRequested),
+                () -> assertFalse(inputView.battleOptionRequested)
         );
     }
 
@@ -47,14 +48,15 @@ class GameControllerTest {
     void 전사는_가능한_행동만_입력_뷰에_전달한다() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         FakeInputView inputView = new FakeInputView(PLAY, WARRIOR, ATTACK);
-        PlayerDefeatingBattleEngine battleEngine = new PlayerDefeatingBattleEngine();
-        GameController controller = controllerWith(inputView, output, battleEngine);
+        GameController controller = controllerWith(inputView, output);
 
         controller.run();
 
+        String message = output.toString();
         assertAll(
                 () -> assertEquals(Set.of(ATTACK, BattleOption.DEFEND), inputView.lastBattleOptions),
-                () -> assertEquals(ATTACK, battleEngine.lastPlayerAction)
+                () -> assertTrue(message.contains("Warrior (전사)의 공격!")),
+                () -> assertTrue(message.contains("플레이어가 패배했습니다. 게임 오버!"))
         );
     }
 
@@ -62,28 +64,25 @@ class GameControllerTest {
     void 마법사는_방어를_제외한_행동만_입력_뷰에_전달한다() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         FakeInputView inputView = new FakeInputView(PLAY, MAGE, SKILL);
-        PlayerDefeatingBattleEngine battleEngine = new PlayerDefeatingBattleEngine();
-        GameController controller = controllerWith(inputView, output, battleEngine);
+        GameController controller = controllerWith(inputView, output);
 
         controller.run();
 
         String message = output.toString();
         assertAll(
                 () -> assertEquals(Set.of(ATTACK, SKILL), inputView.lastBattleOptions),
-                () -> assertEquals(SKILL, battleEngine.lastPlayerAction),
-                () -> assertTrue(message.contains("1 스테이지를 시작합니다.")),
+                () -> assertTrue(message.contains("스테이지를 시작합니다.")),
+                () -> assertTrue(message.contains("Mage (메이지)의 스킬!")),
                 () -> assertTrue(message.contains("플레이어가 패배했습니다. 게임 오버!"))
         );
     }
 
     private GameController controllerWith(FakeInputView inputView,
-                                          ByteArrayOutputStream output,
-                                          BattleEngine battleEngine) {
+                                          ByteArrayOutputStream output) {
         return new GameController(
                 inputView,
                 new OutputView(new PrintStream(output)),
-                battleEngine,
-                new org.example.engine.StageManager()
+                new PlayerDefeatingStageManager()
         );
     }
 
@@ -92,6 +91,8 @@ class GameControllerTest {
         private final JobOption jobOption;
         private final BattleOption battleOption;
         private Set<BattleOption> lastBattleOptions;
+        private boolean jobOptionRequested;
+        private boolean battleOptionRequested;
 
         private FakeInputView(final GameMenuOption menuOption,
                               final JobOption jobOption,
@@ -108,34 +109,22 @@ class GameControllerTest {
 
         @Override
         public JobOption inputJobOption() {
+            jobOptionRequested = true;
             return jobOption;
         }
 
         @Override
         public BattleOption inputBattleOption(final Set<BattleOption> options) {
+            battleOptionRequested = true;
             lastBattleOptions = options;
             return battleOption;
         }
     }
 
-    private static class PlayerDefeatingBattleEngine extends BattleEngine {
-        private BattleOption lastPlayerAction;
-
+    private static class PlayerDefeatingStageManager extends StageManager {
         @Override
-        public BattleTurnResult resolveTurn(final Player player,
-                                            final Monster monster,
-                                            final BattleOption playerAction) {
-            lastPlayerAction = playerAction;
-            final int playerDamageTaken = player.receiveDamage(player.hp());
-
-            return new BattleTurnResult(
-                    playerAction,
-                    0,
-                    playerDamageTaken,
-                    true,
-                    false,
-                    true
-            );
+        public Monster createMonster(final Stage stage) {
+            return new Monster("테스트 몬스터", stage.value(), 1_000, 1_000, 100);
         }
     }
 }

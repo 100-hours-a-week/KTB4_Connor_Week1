@@ -1,22 +1,13 @@
-package model;
+package org.example.model;
 
-import org.example.model.Mage;
-import org.example.model.Player;
-import org.example.model.Warrior;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
-import static org.example.model.vo.BattleOption.ATTACK;
-import static org.example.model.vo.BattleOption.DEFEND;
-import static org.example.model.vo.BattleOption.SKILL;
+import static org.example.model.vo.BattleOption.*;
 import static org.example.model.vo.JobOption.MAGE;
 import static org.example.model.vo.JobOption.WARRIOR;
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
 
@@ -58,8 +49,8 @@ class PlayerTest {
     @Test
     void 직업_옵션으로_플레이어를_생성한다() {
         assertAll(
-                () -> assertTrue(Player.from(WARRIOR) instanceof Warrior),
-                () -> assertTrue(Player.from(MAGE) instanceof Mage)
+                () -> assertInstanceOf(Warrior.class, Player.from(WARRIOR)),
+                () -> assertInstanceOf(Mage.class, Player.from(MAGE))
         );
     }
 

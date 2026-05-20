@@ -12,8 +12,8 @@ public class StageManager {
     private static final int ATTACK_CHANCE = 70;
 
     public Monster createMonster(Stage stage) {
-        int hp = BASE_HP + (stage.value()) * HP_INCREMENT;
+        int hp = BASE_HP + (stage.value() - 1) * HP_INCREMENT;
         int attack = BASE_ATTACK + (stage.value() - 1) * ATTACK_INCREMENT;
-        return new Monster(MONSTER_NAME + " " + stage, stage.value(), hp, attack, ATTACK_CHANCE);
+        return new Monster(MONSTER_NAME + " " + stage.value(), stage.value(), hp, attack, ATTACK_CHANCE);
     }
 }
