@@ -7,21 +7,21 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class StageManagerTest {
-    private final StageManager stageManager = new StageManager();
+class MonsterFactoryTest {
+    private final MonsterFactory monsterFactory = new MonsterFactory();
 
     @Test
     void 스테이지가_오를수록_몬스터가_강해진다() {
-        Monster stageOneMonster = stageManager.createMonster(new Stage(1));
-        Monster stageThreeMonster = stageManager.createMonster(new Stage(3));
+        Monster stageOneMonster = monsterFactory.create(new Stage(1));
+        Monster stageThreeMonster = monsterFactory.create(new Stage(3));
 
         assertAll(
+                () -> assertEquals("Lv.1 고블린", stageOneMonster.name()),
                 () -> assertEquals(40, stageOneMonster.hp()),
                 () -> assertEquals(20, stageOneMonster.attack()),
-                () -> assertEquals(70, stageOneMonster.attackChance()),
+                () -> assertEquals("Lv.3 고블린", stageThreeMonster.name()),
                 () -> assertEquals(60, stageThreeMonster.hp()),
-                () -> assertEquals(30, stageThreeMonster.attack()),
-                () -> assertEquals(3, stageThreeMonster.stage())
+                () -> assertEquals(30, stageThreeMonster.attack())
         );
     }
 }

@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.GameMenuOption;
-import org.example.engine.StageManager;
+import org.example.engine.MonsterFactory;
 import org.example.model.Monster;
 import org.example.model.Stage;
 import org.example.model.vo.BattleOption;
@@ -121,10 +121,14 @@ class GameControllerTest {
         }
     }
 
-    private static class PlayerDefeatingStageManager extends StageManager {
+    private static class PlayerDefeatingStageManager extends MonsterFactory {
         @Override
-        public Monster createMonster(final Stage stage) {
-            return new Monster("테스트 몬스터", stage.value(), 1_000, 1_000, 100);
+        public Monster create(final Stage stage) {
+            return Monster.builder()
+                    .name("테스트 몬스터")
+                    .hp(1_000)
+                    .attack(1_000)
+                    .build();
         }
     }
 }

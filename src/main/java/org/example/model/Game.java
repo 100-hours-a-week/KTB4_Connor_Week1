@@ -3,7 +3,7 @@ package org.example.model;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.example.engine.BattleTurnResult;
-import org.example.engine.StageManager;
+import org.example.engine.MonsterFactory;
 import org.example.model.vo.BattleOption;
 
 import java.util.Objects;
@@ -13,24 +13,24 @@ import java.util.Random;
 @Accessors(fluent = true)
 public class Game {
     private final Player player;
-    private final StageManager stageManager;
+    private final MonsterFactory stageManager;
     private final Random random;
     private final Stage stage;
     private final AttackStrategy attackStrategy;
     private Monster monster;
 
     private Game(final Player player,
-                 final StageManager stageManager) {
+                 final MonsterFactory stageManager) {
         this.player = Objects.requireNonNull(player);
         this.stageManager = Objects.requireNonNull(stageManager);
         this.random = new Random();
         this.stage = new Stage(1);
-        this.monster = stageManager.createMonster(stage);
+        this.monster = stageManager.create(stage);
         this.attackStrategy = new RandomAttackStrategy();
     }
 
     public static Game start(final Player player,
-                             final StageManager stageManager) {
+                             final MonsterFactory stageManager) {
         return new Game(player, stageManager);
     }
 
@@ -66,6 +66,6 @@ public class Game {
         }
 
         stage.increment();
-        monster = stageManager.createMonster(stage);
+        monster = stageManager.create(stage);
     }
 }

@@ -1,7 +1,7 @@
 package org.example.model;
 
 import org.example.engine.BattleTurnResult;
-import org.example.engine.StageManager;
+import org.example.engine.MonsterFactory;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -24,7 +24,7 @@ class GameTest {
 
         assertAll(
                 () -> assertEquals(1, game.stage().value()),
-                () -> assertEquals(1, game.monster().stage()),
+                () -> assertNotNull(game.monster()),
                 () -> assertNotNull(game.player()),
                 () -> assertFalse(game.isOver())
         );
@@ -52,18 +52,17 @@ class GameTest {
         Game game = game();
         game.monster().damage(game.monster().hp());
 
-        game.proceedNextStage();
+        game.nextStage();
 
         assertAll(
                 () -> assertEquals(2, game.stage().value()),
-                () -> assertEquals(2, game.monster().stage()),
                 () -> assertFalse(game.isOver())
         );
     }
 
     @Test
     void 진행_중인_스테이지에서는_다음_스테이지로_진행할_수_없다() {
-        assertThrows(IllegalStateException.class, () -> game().proceedNextStage());
+        assertThrows(IllegalStateException.class, () -> game().nextStage());
     }
 
     @Test
@@ -96,10 +95,14 @@ class GameTest {
         return Game.start(new Warrior(), new NoAttackStageManager());
     }
 
-    private static class NoAttackStageManager extends StageManager {
+    private static class NoAttackStageManager extends MonsterFactory {
         @Override
-        public Monster createMonster(final Stage stage) {
-            return new Monster("테스트 몬스터 " + stage.value(), stage.value(), 40, 20, 0);
+        public Monster create(final Stage stage) {
+            return Monster.builder()
+                    .name("테스트 몬스터")
+                    .hp(40)
+                    .attack(20)
+                    .build();
         }
     }
 }

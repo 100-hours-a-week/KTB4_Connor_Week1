@@ -85,15 +85,15 @@ class CharacterTest {
 
     @Test
     void 이름은_비어_있을_수_없다() {
-        assertThatThrownBy(() -> Character.builder().name("").hp(10).attack(10).build())
+        assertThatThrownBy(() -> new Character("", 10, 10))
                 .hasMessage("이름은 비어 있을 수 없습니다.");
     }
 
     @Test
     void 체력과_공격력은_음수일_수_없다() {
         assertAll(
-                () -> assertThatThrownBy(() -> Character.builder().name("example").hp(-1).attack(10).build()),
-                () -> assertThatThrownBy(() -> Character.builder().name("example").hp(10).attack(-1).build())
+                () -> assertThatThrownBy(() -> new Character("example", -1, 10)),
+                () -> assertThatThrownBy(() -> new Character("example", 10, -1))
         );
     }
 }

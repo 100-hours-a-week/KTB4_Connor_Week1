@@ -2,7 +2,7 @@ package org.example.controller;
 
 import org.example.dto.GameMenuOption;
 import org.example.engine.BattleTurnResult;
-import org.example.engine.StageManager;
+import org.example.engine.MonsterFactory;
 import org.example.model.*;
 import org.example.model.vo.BattleOption;
 import org.example.view.in.InputView;
@@ -11,16 +11,16 @@ import org.example.view.out.OutputView;
 public class GameController {
     private final InputView inputView;
     private final OutputView outputView;
-    private final StageManager stageManager;
+    private final MonsterFactory stageManager;
 
     public GameController(final InputView inputView,
                           final OutputView outputView) {
-        this(inputView, outputView, new StageManager());
+        this(inputView, outputView, new MonsterFactory());
     }
 
     public GameController(final InputView inputView,
                           final OutputView outputView,
-                          final StageManager stageManager) {
+                          final MonsterFactory stageManager) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.stageManager = stageManager;

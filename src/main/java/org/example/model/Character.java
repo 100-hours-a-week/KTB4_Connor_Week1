@@ -1,12 +1,12 @@
 package org.example.model;
 
-import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import lombok.experimental.SuperBuilder;
 
 @Getter
 @Accessors(fluent = true)
-@Builder
+@SuperBuilder
 public class Character implements Attackable {
     private final String name;
     private int hp;
