@@ -5,6 +5,7 @@ import org.example.engine.BattleTurnResult;
 import org.example.engine.StageManager;
 import org.example.model.Mage;
 import org.example.model.Monster;
+import org.example.model.Stage;
 import org.example.model.Warrior;
 import org.junit.jupiter.api.Test;
 
@@ -24,7 +25,7 @@ class BattleEngineTest {
     void 공격하면_몬스터에게_피해를_준다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(10));
         Warrior warrior = new Warrior();
-        Monster monster = stageManager.createMonster(1);
+        Monster monster = stageManager.createMonster(new Stage(1));
 
         BattleTurnResult result = battleEngine.resolveTurn(warrior, monster, ATTACK);
 
@@ -42,7 +43,7 @@ class BattleEngineTest {
     void 방어하면_받는_피해가_감소한다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(10));
         Warrior warrior = new Warrior();
-        Monster monster = stageManager.createMonster(1);
+        Monster monster = stageManager.createMonster(new Stage(1));
 
         BattleTurnResult result = battleEngine.resolveTurn(warrior, monster, DEFEND);
 
@@ -57,7 +58,7 @@ class BattleEngineTest {
     void 스킬은_일반_공격보다_큰_피해를_준다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(10));
         Mage mage = new Mage();
-        Monster monster = stageManager.createMonster(6);
+        Monster monster = stageManager.createMonster(new Stage(6));
 
         BattleTurnResult result = battleEngine.resolveTurn(mage, monster, SKILL);
 
@@ -72,7 +73,7 @@ class BattleEngineTest {
     void 수행할_수_없는_행동은_거부한다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(10));
         Warrior warrior = new Warrior();
-        Monster monster = stageManager.createMonster(1);
+        Monster monster = stageManager.createMonster(new Stage(1));
 
         assertThrows(IllegalArgumentException.class, () -> battleEngine.resolveTurn(warrior, monster, SKILL));
     }
@@ -81,7 +82,7 @@ class BattleEngineTest {
     void 몬스터를_쓰러뜨리면_반격하지_않는다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(10));
         Mage mage = new Mage();
-        Monster monster = stageManager.createMonster(1);
+        Monster monster = stageManager.createMonster(new Stage(1));
 
         BattleTurnResult result = battleEngine.resolveTurn(mage, monster, SKILL);
 
@@ -97,7 +98,7 @@ class BattleEngineTest {
     void 몬스터가_공격하지_않을_수_있다() {
         BattleEngine battleEngine = new BattleEngine(new FixedRandom(90));
         Warrior warrior = new Warrior();
-        Monster monster = stageManager.createMonster(1);
+        Monster monster = stageManager.createMonster(new Stage(1));
 
         BattleTurnResult result = battleEngine.resolveTurn(warrior, monster, ATTACK);
 

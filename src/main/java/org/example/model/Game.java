@@ -16,7 +16,7 @@ public class Game {
     private final StageManager stageManager;
     private final BattleEngine battleEngine;
 
-    private int stage;
+    private final Stage stage;
     private Monster monster;
 
     private Game(final Player player,
@@ -25,7 +25,7 @@ public class Game {
         this.player = Objects.requireNonNull(player);
         this.stageManager = Objects.requireNonNull(stageManager);
         this.battleEngine = Objects.requireNonNull(battleEngine);
-        this.stage = 1;
+        this.stage = new Stage(1);
         this.monster = stageManager.createMonster(stage);
     }
 
@@ -60,7 +60,7 @@ public class Game {
             throw new IllegalStateException("스테이지를 클리어해야 다음 스테이지로 이동할 수 있습니다.");
         }
 
-        stage++;
+        stage.increment();
         monster = stageManager.createMonster(stage);
     }
 }
