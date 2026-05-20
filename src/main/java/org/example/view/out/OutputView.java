@@ -14,7 +14,7 @@ public class OutputView {
         this.printStream = Objects.requireNonNull(printStream);
     }
 
-    public void print(String message) {
+    public void print(final String message) {
         printStream.println(message);
     }
 }
