@@ -37,7 +37,7 @@ public class GameController {
         while (!game.isOver()) {
             outputView.print(game.stage().value() + " 스테이지를 시작합니다.");
 
-            while (game.isStageInProgress()) {
+            while (!game.isOver()) {
                 final Player player = game.player();
                 final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
 

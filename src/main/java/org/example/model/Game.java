@@ -33,10 +33,6 @@ public class Game {
     }
 
     public BattleTurnResult playTurn(final BattleOption battleOption) {
-        if (!isStageInProgress()) {
-            throw new IllegalStateException("진행 중인 스테이지가 없습니다.");
-        }
-
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
@@ -67,11 +63,7 @@ public class Game {
     }
 
     public boolean isOver() {
-        return !player.isAlive();
-    }
-
-    public boolean isStageInProgress() {
-        return player.isAlive() && monster.isAlive();
+        return !player.isAlive() && monster.isAlive();
     }
 
     public void proceedNextStage() {

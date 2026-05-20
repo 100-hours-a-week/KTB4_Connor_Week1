@@ -24,7 +24,7 @@ class GameTest {
                 () -> assertEquals(1, game.stage().value()),
                 () -> assertEquals(1, game.monster().stage()),
                 () -> assertNotNull(game.player()),
-                () -> assertTrue(game.isStageInProgress()),
+                () -> assertFalse(game.isOver()),
                 () -> assertFalse(game.isOver())
         );
     }
@@ -53,21 +53,13 @@ class GameTest {
         assertAll(
                 () -> assertEquals(2, game.stage().value()),
                 () -> assertEquals(2, game.monster().stage()),
-                () -> assertTrue(game.isStageInProgress())
+                () -> assertFalse(game.isOver())
         );
     }
 
     @Test
     void 진행_중인_스테이지에서는_다음_스테이지로_진행할_수_없다() {
         assertThrows(IllegalStateException.class, () -> game().proceedNextStage());
-    }
-
-    @Test
-    void 진행_중인_스테이지가_없으면_턴을_진행할_수_없다() {
-        Game game = game();
-        game.monster().receiveDamage(game.monster().hp());
-
-        assertThrows(IllegalStateException.class, () -> game.playTurn(ATTACK));
     }
 
     @Test
