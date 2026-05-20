@@ -1,6 +1,7 @@
 package org.example.engine;
 
 import org.example.model.Monster;
+import org.example.model.MonsterFactory;
 import org.example.model.Stage;
 import org.junit.jupiter.api.Test;
 

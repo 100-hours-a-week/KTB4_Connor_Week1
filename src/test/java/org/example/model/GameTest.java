@@ -1,7 +1,6 @@
 package org.example.model;
 
-import org.example.engine.BattleTurnResult;
-import org.example.engine.MonsterFactory;
+import org.example.dto.TurnResult;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
@@ -34,7 +33,7 @@ class GameTest {
     void 턴을_진행하면_전투_결과가_상태에_반영된다() {
         Game game = game();
 
-        BattleTurnResult result = game.playTurn(ATTACK);
+        TurnResult result = game.playTurn(ATTACK);
 
         assertAll(
                 () -> assertEquals(ATTACK, result.playerAction()),

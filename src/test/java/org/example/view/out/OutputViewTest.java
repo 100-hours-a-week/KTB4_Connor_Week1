@@ -1,6 +1,9 @@
 package org.example.view.out;
 
 import org.example.dto.TurnResult;
+import org.example.model.Monster;
+import org.example.model.Player;
+import org.example.model.Warrior;
 import org.junit.jupiter.api.Test;
 
 import java.io.ByteArrayOutputStream;
@@ -29,19 +32,20 @@ class OutputViewTest {
     void 전투_결과를_출력한다() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         OutputView outputView = new OutputView(new PrintStream(output));
-        TurnResult result = TurnResult.builder()
-                .playerAction(ATTACK)
-                .playerName("Warrior (전사)")
-                .monsterName("Lv.1 고블린")
-                .monsterDamageTaken(25)
-                .playerDamageTaken(20)
-                .monsterAttacked(true)
-                .monsterDefeated(false)
-                .playerDefeated(false)
-                .playerHp(160)
-                .playerMaxHp(180)
-                .monsterHp(15)
-                .build();
+        Player player = new Warrior();
+        Monster monster = new Monster("Lv.1 고블린", 40, 20);
+        player.damage(20);
+        monster.damage(25);
+
+        TurnResult result = TurnResult.of(
+                ATTACK,
+                player,
+                monster,
+                25,
+                20,
+                true,
+                false
+        );
 
         outputView.printBattleResult(result);
 
@@ -59,19 +63,19 @@ class OutputViewTest {
     void 몬스터를_처치하면_체력_상태는_출력하지_않는다() {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         OutputView outputView = new OutputView(new PrintStream(output));
-        TurnResult result = TurnResult.builder()
-                .playerAction(ATTACK)
-                .playerName("Warrior (전사)")
-                .monsterName("Lv.1 고블린")
-                .monsterDamageTaken(25)
-                .playerDamageTaken(0)
-                .monsterAttacked(false)
-                .monsterDefeated(true)
-                .playerDefeated(false)
-                .playerHp(180)
-                .playerMaxHp(180)
-                .monsterHp(0)
-                .build();
+        Player player = new Warrior();
+        Monster monster = new Monster("Lv.1 고블린", 25, 20);
+        monster.damage(25);
+
+        TurnResult result = TurnResult.of(
+                ATTACK,
+                player,
+                monster,
+                25,
+                0,
+                false,
+                true
+        );
 
         outputView.printBattleResult(result);
 

@@ -2,8 +2,7 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import org.example.engine.BattleTurnResult;
-import org.example.engine.MonsterFactory;
+import org.example.dto.TurnResult;
 import org.example.model.vo.BattleOption;
 
 import java.util.Objects;
@@ -34,7 +33,7 @@ public class Game {
         return new Game(player, stageManager);
     }
 
-    public BattleTurnResult playTurn(final BattleOption battleOption) {
+    public TurnResult playTurn(final BattleOption battleOption) {
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
@@ -42,17 +41,27 @@ public class Game {
         monster.damage(monsterDamageTaken);
 
         if (!monster.isAlive()) {
-            return new BattleTurnResult(battleOption, monsterDamageTaken, 0, false, true, false);
+            return createTurnResult(battleOption, monsterDamageTaken, 0, false, true);
         }
         int playerDamageTaken = monster.attack(attackStrategy);
         player.damage(playerDamageTaken);
 
-        return new BattleTurnResult(battleOption,
+        return createTurnResult(battleOption, monsterDamageTaken, playerDamageTaken, playerDamageTaken > 0, false);
+    }
+
+    private TurnResult createTurnResult(final BattleOption battleOption,
+                                        final int monsterDamageTaken,
+                                        final int playerDamageTaken,
+                                        final boolean monsterAttacked,
+                                        final boolean monsterDefeated) {
+        return TurnResult.of(
+                battleOption,
+                player,
+                monster,
                 monsterDamageTaken,
                 playerDamageTaken,
-                playerDamageTaken > 0,
-                false,
-                !player.isAlive()
+                monsterAttacked,
+                monsterDefeated
         );
     }
 

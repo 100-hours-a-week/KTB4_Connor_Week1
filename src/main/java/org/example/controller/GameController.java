@@ -1,10 +1,9 @@
 package org.example.controller;
 
-import org.example.dto.TurnResult;
 import org.example.dto.GameMenuOption;
-import org.example.engine.BattleTurnResult;
-import org.example.engine.MonsterFactory;
+import org.example.dto.TurnResult;
 import org.example.model.Game;
+import org.example.model.MonsterFactory;
 import org.example.model.Player;
 import org.example.model.vo.BattleOption;
 import org.example.view.in.InputView;
@@ -41,8 +40,8 @@ public class GameController {
                 final Player player = game.player();
                 final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
 
-                final BattleTurnResult result = game.playTurn(option);
-                outputView.printBattleResult(TurnResult.from(player, game.monster(), result));
+                final TurnResult result = game.playTurn(option);
+                outputView.printBattleResult(result);
             }
 
             if (!game.player().isAlive()) {

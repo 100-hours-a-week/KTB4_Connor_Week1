@@ -1,7 +1,7 @@
 package org.example.controller;
 
 import org.example.dto.GameMenuOption;
-import org.example.engine.MonsterFactory;
+import org.example.model.MonsterFactory;
 import org.example.model.Monster;
 import org.example.model.Stage;
 import org.example.model.vo.BattleOption;
