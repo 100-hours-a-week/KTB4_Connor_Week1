@@ -55,7 +55,7 @@ class GameControllerTest {
         String message = output.toString();
         assertAll(
                 () -> assertEquals(Set.of(ATTACK, BattleOption.DEFEND), inputView.lastBattleOptions),
-                () -> assertTrue(message.contains("Warrior (전사)의 공격!")),
+                () -> assertTrue(message.contains("Warrior (전사)의 공격 -")),
                 () -> assertTrue(message.contains("플레이어가 패배했습니다. 게임 오버!"))
         );
     }
@@ -72,7 +72,7 @@ class GameControllerTest {
         assertAll(
                 () -> assertEquals(Set.of(ATTACK, SKILL), inputView.lastBattleOptions),
                 () -> assertTrue(message.contains("스테이지를 시작합니다.")),
-                () -> assertTrue(message.contains("Mage (메이지)의 스킬!")),
+                () -> assertTrue(message.contains("Mage (메이지)의 스킬 -")),
                 () -> assertTrue(message.contains("플레이어가 패배했습니다. 게임 오버!"))
         );
     }
