@@ -10,6 +10,8 @@ import java.util.Set;
 import static org.example.model.vo.BattleOption.ATTACK;
 import static org.example.model.vo.BattleOption.DEFEND;
 import static org.example.model.vo.BattleOption.SKILL;
+import static org.example.model.vo.JobOption.MAGE;
+import static org.example.model.vo.JobOption.WARRIOR;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -51,5 +53,43 @@ class PlayerTest {
         assertThrows(IllegalArgumentException.class,
                 () -> new Player("테스트", 100, 10, Set.of()) {
                 });
+    }
+
+    @Test
+    void 직업_옵션으로_플레이어를_생성한다() {
+        assertAll(
+                () -> assertTrue(Player.from(WARRIOR) instanceof Warrior),
+                () -> assertTrue(Player.from(MAGE) instanceof Mage)
+        );
+    }
+
+    @Test
+    void 플레이어의_행동_목록은_수정할_수_없다() {
+        Warrior warrior = new Warrior();
+
+        assertThrows(UnsupportedOperationException.class,
+                () -> warrior.availableBattleOptions().add(SKILL));
+    }
+
+    @Test
+    void null_행동은_수행할_수_없다() {
+        assertFalse(new Warrior().canPerform(null));
+    }
+
+    @Test
+    void 행동에_따라_피해량이_달라진다() {
+        Warrior warrior = new Warrior();
+        Mage mage = new Mage();
+
+        assertAll(
+                () -> assertEquals(25, warrior.damageFor(ATTACK)),
+                () -> assertEquals(0, warrior.damageFor(DEFEND)),
+                () -> assertEquals(80, mage.damageFor(SKILL))
+        );
+    }
+
+    @Test
+    void 수행할_수_없는_행동의_피해량은_계산할_수_없다() {
+        assertThrows(IllegalArgumentException.class, () -> new Warrior().damageFor(SKILL));
     }
 }
