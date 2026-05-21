@@ -7,6 +7,7 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.example.model.vo.BattleOption.ATTACK;
+import static org.example.model.vo.BattleOption.DEFEND;
 import static org.example.model.vo.BattleOption.SKILL;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -37,12 +38,39 @@ class GameTest {
 
         assertAll(
                 () -> assertEquals(ATTACK, result.playerAction()),
-                () -> assertTrue(Set.of(0, 25).contains(result.monsterDamageTaken())),
+                () -> assertEquals(25, result.monsterDamageTaken()),
                 () -> assertTrue(Set.of(0, 20).contains(result.playerDamageTaken())),
                 () -> assertEquals(result.playerDamageTaken() > 0, result.monsterAttacked()),
                 () -> assertFalse(result.monsterDefeated()),
                 () -> assertEquals(40 - result.monsterDamageTaken(), game.monster().hp()),
                 () -> assertEquals(180 - result.playerDamageTaken(), game.player().hp())
+        );
+    }
+
+    @Test
+    void 방어를_선택하면_몬스터에게_피해를_주지_않는다() {
+        Game game = game();
+
+        TurnResult result = game.playTurn(DEFEND);
+
+        assertAll(
+                () -> assertEquals(DEFEND, result.playerAction()),
+                () -> assertEquals(0, result.monsterDamageTaken()),
+                () -> assertEquals(40, game.monster().hp())
+        );
+    }
+
+    @Test
+    void 스킬을_선택하면_공격력의_두_배_피해를_준다() {
+        Game game = Game.start(new Mage(), new NoAttackStageManager());
+
+        TurnResult result = game.playTurn(SKILL);
+
+        assertAll(
+                () -> assertEquals(SKILL, result.playerAction()),
+                () -> assertEquals(80, result.monsterDamageTaken()),
+                () -> assertTrue(result.monsterDefeated()),
+                () -> assertEquals(0, game.monster().hp())
         );
     }
 
