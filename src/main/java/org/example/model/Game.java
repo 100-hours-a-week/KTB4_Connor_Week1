@@ -6,14 +6,12 @@ import org.example.dto.TurnResult;
 import org.example.model.vo.BattleOption;
 
 import java.util.Objects;
-import java.util.Random;
 
 @Getter
 @Accessors(fluent = true)
 public class Game {
     private final Player player;
     private final MonsterFactory stageManager;
-    private final Random random;
     private final Stage stage;
     private final AttackStrategy attackStrategy;
     private Monster monster;
@@ -22,7 +20,6 @@ public class Game {
                  final MonsterFactory stageManager) {
         this.player = Objects.requireNonNull(player);
         this.stageManager = Objects.requireNonNull(stageManager);
-        this.random = new Random();
         this.stage = new Stage(1);
         this.monster = stageManager.create(stage);
         this.attackStrategy = new RandomAttackStrategy();
@@ -37,7 +34,7 @@ public class Game {
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
-        int monsterDamageTaken = player.attack(attackStrategy);
+        int monsterDamageTaken = player.damageFor(battleOption);
         monster.damage(monsterDamageTaken);
 
         if (!monster.isAlive()) {

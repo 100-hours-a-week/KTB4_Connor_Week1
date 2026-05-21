@@ -47,7 +47,7 @@ class OutputViewTest {
                 false
         );
 
-        outputView.printBattleResult(result);
+        outputView.printTurnResult(result);
 
         String message = output.toString();
         assertAll(
@@ -77,7 +77,7 @@ class OutputViewTest {
                 true
         );
 
-        outputView.printBattleResult(result);
+        outputView.printTurnResult(result);
 
         String message = output.toString();
         assertAll(
