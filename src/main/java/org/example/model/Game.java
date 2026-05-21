@@ -34,13 +34,13 @@ public class Game {
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
-        int monsterDamageTaken = player.damageFor(battleOption);
+        final int monsterDamageTaken = player.damageFor(battleOption);
         monster.damage(monsterDamageTaken);
 
         if (!monster.isAlive()) {
             return createTurnResult(battleOption, monsterDamageTaken, 0, false, true);
         }
-        int playerDamageTaken = monster.attack(attackStrategy);
+        final int playerDamageTaken = monster.attack(attackStrategy);
         player.damage(playerDamageTaken);
 
         return createTurnResult(battleOption, monsterDamageTaken, playerDamageTaken, playerDamageTaken > 0, false);
@@ -64,6 +64,10 @@ public class Game {
 
     public boolean isOver() {
         return !player.isAlive() && monster.isAlive();
+    }
+
+    public int currentStage() {
+        return stage.value();
     }
 
     public void nextStage() {

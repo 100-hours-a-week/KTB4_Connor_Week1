@@ -2,8 +2,12 @@ package org.example.model;
 
 import org.example.dto.TurnResult;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.example.model.vo.BattleOption.ATTACK;
@@ -108,13 +112,16 @@ class GameTest {
         assertTrue(game.isOver());
     }
 
-    @Test
-    void 게임_생성에_필요한_값은_null일_수_없다() {
-        assertAll(
-                () -> assertThrows(NullPointerException.class,
-                        () -> Game.start(null, new NoAttackStageManager())),
-                () -> assertThrows(NullPointerException.class,
-                        () -> Game.start(new Warrior(), null))
+    @ParameterizedTest
+    @MethodSource("provideNullArguments")
+    void 게임_생성에_필요한_값은_null일_수_없다(Player player, MonsterFactory stageManager) {
+        assertThrows(NullPointerException.class, () -> Game.start(player, stageManager));
+    }
+
+    private static Stream<Arguments> provideNullArguments() {
+        return Stream.of(
+            Arguments.of(null, new GameTest.NoAttackStageManager()),
+            Arguments.of(new Warrior(), null)
         );
     }
 
