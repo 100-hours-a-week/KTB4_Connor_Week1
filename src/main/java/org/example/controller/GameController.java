@@ -41,7 +41,7 @@ public class GameController {
                 final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
 
                 final TurnResult result = game.playTurn(option);
-                outputView.printBattleResult(result);
+                outputView.printTurnResult(result);
             }
 
             if (!game.player().isAlive()) {
