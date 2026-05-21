@@ -17,10 +17,10 @@ public class Randoms {
 
     private static void validateRange(final int startInclusive, final int endInclusive) {
         if (startInclusive > endInclusive) {
-            throw new IllegalArgumentException("startInclusive cannot be greater than endInclusive.");
+            throw new IllegalArgumentException("시작 값은 종료 값보다 클 수 없습니다.");
         }
         if (endInclusive == Integer.MAX_VALUE) {
-            throw new IllegalArgumentException("endInclusive cannot be greater than Integer.MAX_VALUE.");
+            throw new IllegalArgumentException("종료 값이 정수형의 최대값 보다 클 수 없습니다.");
         }
     }
 }
