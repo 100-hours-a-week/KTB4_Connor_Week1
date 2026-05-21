@@ -84,7 +84,8 @@ class GameTest {
                 () -> assertEquals(SKILL, result.playerAction()),
                 () -> assertEquals(80, result.monsterDamageTaken()),
                 () -> assertTrue(result.monsterDefeated()),
-                () -> assertEquals(0, game.monster().hp())
+                () -> assertEquals(0, game.monster().hp()),
+                () -> assertTrue(game.isClear())
         );
     }
 

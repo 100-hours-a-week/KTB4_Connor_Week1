@@ -63,7 +63,11 @@ public class Game {
     }
 
     public boolean isOver() {
-        return !player.isAlive() && monster.isAlive();
+        return !player.isAlive();
+    }
+
+    public boolean isClear() {
+        return !monster.isAlive();
     }
 
     public int currentStage() {

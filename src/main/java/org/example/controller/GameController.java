@@ -36,7 +36,7 @@ public class GameController {
         while (!game.isOver()) {
             outputView.printStageStart(game.currentStage());
 
-            while (!game.isOver()) {
+            while (!game.isOver() && !game.isClear()) {
                 final Player player = game.player();
                 final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
 
@@ -44,7 +44,7 @@ public class GameController {
                 outputView.printTurnResult(result);
             }
 
-            if (!game.player().isAlive()) {
+            if (game.isOver()) {
                 outputView.printGameOver();
                 return;
             }
