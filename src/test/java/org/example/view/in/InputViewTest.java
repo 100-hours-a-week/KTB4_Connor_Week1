@@ -14,9 +14,9 @@ import static org.example.model.vo.BattleOption.DEFEND;
 import static org.example.model.vo.BattleOption.SKILL;
 import static org.example.model.vo.JobOption.MAGE;
 import static org.example.model.vo.JobOption.WARRIOR;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class InputViewTest {
 
@@ -34,7 +34,9 @@ class InputViewTest {
 
     @Test
     void 메뉴_번호가_아니면_예외가_발생한다() {
-        assertThrows(IllegalStateException.class, () -> inputView("3\n").inputMenuOption());
+        // expected
+        assertThatThrownBy(() -> inputView("3\n").inputMenuOption())
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -47,7 +49,9 @@ class InputViewTest {
 
     @Test
     void 직업_번호가_아니면_예외가_발생한다() {
-        assertThrows(IllegalStateException.class, () -> inputView("3\n").inputJobOption());
+        // expected
+        assertThatThrownBy(() -> inputView("3\n").inputJobOption())
+                .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
@@ -63,7 +67,11 @@ class InputViewTest {
 
     @Test
     void 전투_행동_번호가_아니면_예외가_발생한다() {
-        assertThrows(IllegalStateException.class,
-                () -> inputView("4\n").inputBattleOption(Set.of(ATTACK, DEFEND, SKILL)));
+        // given
+        Set<BattleOption> options = Set.of(ATTACK, DEFEND, SKILL);
+
+        // expected
+        assertThatThrownBy(() -> inputView("4\n").inputBattleOption(options))
+                .isInstanceOf(IllegalStateException.class);
     }
 }

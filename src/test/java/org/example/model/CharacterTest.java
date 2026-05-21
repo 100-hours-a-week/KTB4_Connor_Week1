@@ -31,14 +31,17 @@ class CharacterTest {
 
     @Test
     void 피해를_받으면_체력이_감소한다() {
+        // given
         Character character = Character.builder()
                 .name("example")
                 .hp(30)
                 .attack(10)
                 .build();
 
+        // when
         character.damage(12);
 
+        // then
         assertAll(
                 () -> assertEquals(18, character.hp()),
                 () -> assertTrue(character.isAlive())
@@ -47,14 +50,17 @@ class CharacterTest {
 
     @Test
     void 체력은_0보다_작아지지_않는다() {
+        // given
         Character character = Character.builder()
                 .name("example")
                 .hp(10)
                 .attack(10)
                 .build();
 
+        // when
         character.damage(20);
 
+        // then
         assertAll(
                 () -> assertEquals(0, character.hp()),
                 () -> assertFalse(character.isAlive())
@@ -63,37 +69,51 @@ class CharacterTest {
 
     @Test
     void 공격_전략이_성공하면_공격력을_반환한다() {
+        // given
         Character character = Character.builder()
                 .name("example")
                 .hp(30)
                 .attack(10)
                 .build();
 
-        assertEquals(10, character.attack(() -> true));
+        // when
+        AttackStrategy strategy = () -> true;
+
+        // then
+        assertEquals(10, character.attack(strategy));
     }
 
     @Test
     void 공격_전략이_실패하면_0을_반환한다() {
+        //given
         Character character = Character.builder()
                 .name("example")
                 .hp(30)
                 .attack(10)
                 .build();
 
-        assertEquals(0, character.attack(() -> false));
+        // when
+        AttackStrategy strategy = () -> false;
+
+        assertEquals(0, character.attack(strategy));
     }
 
     @Test
     void 이름은_비어_있을_수_없다() {
+        // expected
         assertThatThrownBy(() -> new Character("", 10, 10))
+                .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이름은 비어 있을 수 없습니다.");
     }
 
     @Test
     void 체력과_공격력은_음수일_수_없다() {
+        // expected
         assertAll(
-                () -> assertThatThrownBy(() -> new Character("example", -1, 10)),
+                () -> assertThatThrownBy(() -> new Character("example", -1, 10))
+                        .isInstanceOf(IllegalArgumentException.class),
                 () -> assertThatThrownBy(() -> new Character("example", 10, -1))
+                        .isInstanceOf(IllegalArgumentException.class)
         );
     }
 }

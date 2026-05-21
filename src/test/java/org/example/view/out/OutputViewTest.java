@@ -9,12 +9,12 @@ import org.junit.jupiter.api.Test;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.example.model.vo.BattleOption.ATTACK;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class OutputViewTest {
 
@@ -88,6 +88,8 @@ class OutputViewTest {
 
     @Test
     void 출력_대상은_null일_수_없다() {
-        assertThrows(NullPointerException.class, () -> new OutputView(null));
+        // expected
+        assertThatThrownBy(() -> new OutputView(null))
+                .isInstanceOf(NullPointerException.class);
     }
 }
