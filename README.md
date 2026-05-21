@@ -41,11 +41,6 @@
   - `view.in`: 사용자 입력
   - `view.out`: 전투 결과와 ASCII 애니메이션 출력
 
-## 추가 문서
-
-- [비동기 애니메이션 출력 구현 정리](docs/async-animation.md)
-- [과제 회고](docs/retrospective.md)
-
 ## 클래스 다이어그램
 
 ![클래스 다이어그램](diagram.png)
