@@ -3,7 +3,6 @@ package org.example.model;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 import org.example.model.vo.BattleOption;
-import org.example.model.vo.JobOption;
 
 import java.util.EnumSet;
 import java.util.Set;
@@ -21,13 +20,6 @@ public abstract class Player extends GameCharacter {
         }
         this.maxHp = hp;
         this.availableBattleOptions = Set.copyOf(EnumSet.copyOf(availableBattleOptions));
-    }
-
-    public static Player from(final JobOption jobOption) {
-        return switch (jobOption) {
-            case WARRIOR -> new Warrior();
-            case MAGE -> new Mage();
-        };
     }
 
     public boolean canPerform(BattleOption battleOption) {

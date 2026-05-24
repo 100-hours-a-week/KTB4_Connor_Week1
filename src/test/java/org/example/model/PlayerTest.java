@@ -1,13 +1,12 @@
 package org.example.model;
 
+import org.example.model.vo.BattleOption;
 import org.junit.jupiter.api.Test;
 
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.example.model.vo.BattleOption.*;
-import static org.example.model.vo.JobOption.MAGE;
-import static org.example.model.vo.JobOption.WARRIOR;
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -47,27 +46,18 @@ class PlayerTest {
     @Test
     void 플레이어는_하나_이상의_행동을_가져야_한다() {
         // expected
-        assertThatThrownBy(() -> new Player("테스트", 100, 10, Set.of()) {
-                })
+        assertThatThrownBy(this::createInvalidPlayer)
                 .isInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    void 직업_옵션으로_플레이어를_생성한다() {
-        // expected
-        assertAll(
-                () -> assertInstanceOf(Warrior.class, Player.from(WARRIOR)),
-                () -> assertInstanceOf(Mage.class, Player.from(MAGE))
-        );
     }
 
     @Test
     void 플레이어의_행동_목록은_수정할_수_없다() {
         // given
         Warrior warrior = new Warrior();
+        Set<BattleOption> availableBattleOptions = warrior.availableBattleOptions();
 
         // expected
-        assertThatThrownBy(() -> warrior.availableBattleOptions().add(SKILL))
+        assertThatThrownBy(() -> availableBattleOptions.add(SKILL))
                 .isInstanceOf(UnsupportedOperationException.class);
     }
 
@@ -93,8 +83,16 @@ class PlayerTest {
 
     @Test
     void 수행할_수_없는_행동의_피해량은_계산할_수_없다() {
+        // given
+        Warrior warrior = new Warrior();
+
         // expected
-        assertThatThrownBy(() -> new Warrior().damageFor(SKILL))
+        assertThatThrownBy(() -> warrior.damageFor(SKILL))
                 .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    private void createInvalidPlayer() {
+        new Player("테스트", 100, 10, Set.of()) {
+        };
     }
 }

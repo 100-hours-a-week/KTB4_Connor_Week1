@@ -5,6 +5,7 @@ import org.example.dto.TurnResult;
 import org.example.model.Game;
 import org.example.model.MonsterFactory;
 import org.example.model.Player;
+import org.example.model.PlayerFactory;
 import org.example.model.vo.BattleOption;
 import org.example.view.in.InputView;
 import org.example.view.out.OutputView;
@@ -12,18 +13,27 @@ import org.example.view.out.OutputView;
 public class GameController {
     private final InputView inputView;
     private final OutputView outputView;
+    private final PlayerFactory playerFactory;
     private final MonsterFactory stageManager;
 
     public GameController(final InputView inputView,
                           final OutputView outputView) {
-        this(inputView, outputView, new MonsterFactory());
+        this(inputView, outputView, new PlayerFactory(), new MonsterFactory());
     }
 
     public GameController(final InputView inputView,
                           final OutputView outputView,
                           final MonsterFactory stageManager) {
+        this(inputView, outputView, new PlayerFactory(), stageManager);
+    }
+
+    public GameController(final InputView inputView,
+                          final OutputView outputView,
+                          final PlayerFactory playerFactory,
+                          final MonsterFactory stageManager) {
         this.inputView = inputView;
         this.outputView = outputView;
+        this.playerFactory = playerFactory;
         this.stageManager = stageManager;
     }
 
@@ -58,7 +68,7 @@ public class GameController {
         final GameMenuOption menu = inputView.inputMenuOption();
         return switch (menu) {
             case PLAY -> {
-                final Player player = Player.from(inputView.inputJobOption());
+                final Player player = playerFactory.create(inputView.inputJobOption());
                 yield Game.start(player, stageManager);
             }
             case EXIT -> {
