@@ -163,11 +163,7 @@ class GameControllerTest {
         @Override
         public Monster create(final Stage stage) {
             if (stage.value() == 1) {
-                return Monster.builder()
-                        .name("1스테이지 몬스터")
-                        .hp(1)
-                        .attack(0)
-                        .build();
+                return new Monster("1스테이지 몬스터", 1, 0);
             }
 
             return new AlwaysAttackMonster("2스테이지 몬스터", 1_000, 1_000);
