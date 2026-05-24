@@ -15,11 +15,7 @@ class CharacterTest {
         int attack = 0;
 
         // when
-        Character character = Character.builder()
-                .name(name)
-                .hp(hp)
-                .attack(attack)
-                .build();
+        GameCharacter character = new GameCharacter(name, hp, attack);
 
         // then
         assertAll(
@@ -32,11 +28,7 @@ class CharacterTest {
     @Test
     void 피해를_받으면_체력이_감소한다() {
         // given
-        Character character = Character.builder()
-                .name("example")
-                .hp(30)
-                .attack(10)
-                .build();
+        GameCharacter character = new GameCharacter("example", 30, 10);
 
         // when
         character.damage(12);
@@ -51,11 +43,7 @@ class CharacterTest {
     @Test
     void 체력은_0보다_작아지지_않는다() {
         // given
-        Character character = Character.builder()
-                .name("example")
-                .hp(10)
-                .attack(10)
-                .build();
+        GameCharacter character = new GameCharacter("example", 10, 10);
 
         // when
         character.damage(20);
@@ -70,11 +58,7 @@ class CharacterTest {
     @Test
     void 공격_전략이_성공하면_공격력을_반환한다() {
         // given
-        Character character = Character.builder()
-                .name("example")
-                .hp(30)
-                .attack(10)
-                .build();
+        GameCharacter character = new GameCharacter("example", 30, 10);
 
         // when
         AttackStrategy strategy = () -> true;
@@ -86,11 +70,7 @@ class CharacterTest {
     @Test
     void 공격_전략이_실패하면_0을_반환한다() {
         //given
-        Character character = Character.builder()
-                .name("example")
-                .hp(30)
-                .attack(10)
-                .build();
+        GameCharacter character = new GameCharacter("example", 30, 10);
 
         // when
         AttackStrategy strategy = () -> false;
@@ -101,7 +81,7 @@ class CharacterTest {
     @Test
     void 이름은_비어_있을_수_없다() {
         // expected
-        assertThatThrownBy(() -> new Character("", 10, 10))
+        assertThatThrownBy(() -> new GameCharacter("", 10, 10))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이름은 비어 있을 수 없습니다.");
     }
@@ -110,9 +90,9 @@ class CharacterTest {
     void 체력과_공격력은_음수일_수_없다() {
         // expected
         assertAll(
-                () -> assertThatThrownBy(() -> new Character("example", -1, 10))
+                () -> assertThatThrownBy(() -> new GameCharacter("example", -1, 10))
                         .isInstanceOf(IllegalArgumentException.class),
-                () -> assertThatThrownBy(() -> new Character("example", 10, -1))
+                () -> assertThatThrownBy(() -> new GameCharacter("example", 10, -1))
                         .isInstanceOf(IllegalArgumentException.class)
         );
     }

@@ -2,17 +2,15 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
-import lombok.experimental.SuperBuilder;
 
 @Getter
 @Accessors(fluent = true)
-@SuperBuilder
-public class Character implements Attackable {
+public class GameCharacter implements Attackable {
     private final String name;
     private int hp;
     private final int attack;
 
-    public Character(String name, int hp, int attack) {
+    public GameCharacter(String name, int hp, int attack) {
         validateName(name);
         validateHp(hp);
         validateAttack(attack);

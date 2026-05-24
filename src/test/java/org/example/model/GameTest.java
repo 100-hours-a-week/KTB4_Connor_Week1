@@ -107,15 +107,21 @@ class GameTest {
 
     @Test
     void 진행_중인_스테이지에서는_다음_스테이지로_진행할_수_없다() {
+        // given
+        Game game = game();
+
         // expected
-        assertThatThrownBy(() -> game().nextStage())
+        assertThatThrownBy(game::nextStage)
                 .isInstanceOf(IllegalStateException.class);
     }
 
     @Test
     void 수행할_수_없는_행동으로는_턴을_진행할_수_없다() {
+        // given
+        Game game = game();
+
         // expected
-        assertThatThrownBy(() -> game().playTurn(SKILL))
+        assertThatThrownBy(() -> game.playTurn(SKILL))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("플레이어가 수행할 수 없는 행동입니다.");
     }
@@ -154,11 +160,7 @@ class GameTest {
     private static class NoAttackStageManager extends MonsterFactory {
         @Override
         public Monster create(final Stage stage) {
-            return Monster.builder()
-                    .name("테스트 몬스터")
-                    .hp(40)
-                    .attack(20)
-                    .build();
+            return new Monster("테스트 몬스터", 40, 20);
         }
     }
 }

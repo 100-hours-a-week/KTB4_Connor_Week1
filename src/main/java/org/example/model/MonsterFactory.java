@@ -10,10 +10,6 @@ public class MonsterFactory {
     public Monster create(Stage stage) {
         int hp = BASE_HP + (stage.value() - 1) * HP_INCREMENT;
         int attack = BASE_ATTACK + (stage.value() - 1) * ATTACK_INCREMENT;
-        return Monster.builder()
-                .name(MONSTER_NAME.formatted(stage.value()))
-                .hp(hp)
-                .attack(attack)
-                .build();
+        return new Monster(MONSTER_NAME.formatted(stage.value()), hp, attack);
     }
 }
