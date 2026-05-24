@@ -26,15 +26,13 @@ public abstract class Player extends GameCharacter {
         return battleOption != null && availableBattleOptions.contains(battleOption);
     }
 
-    public int damageFor(BattleOption battleOption) {
+    public final int damageFor(BattleOption battleOption) {
         if (!canPerform(battleOption)) {
             throw new IllegalArgumentException("수행할 수 없는 행동입니다.");
         }
 
-        return switch (battleOption) {
-            case ATTACK -> attack();
-            case DEFEND -> 0;
-            case SKILL -> attack() * 2;
-        };
+        return damageForAvailableAction(battleOption);
     }
+
+    protected abstract int damageForAvailableAction(BattleOption battleOption);
 }

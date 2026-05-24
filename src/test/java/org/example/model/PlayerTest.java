@@ -93,6 +93,10 @@ class PlayerTest {
 
     private void createInvalidPlayer() {
         new Player("테스트", 100, 10, Set.of()) {
+            @Override
+            protected int damageForAvailableAction(final BattleOption battleOption) {
+                return 0;
+            }
         };
     }
 }
