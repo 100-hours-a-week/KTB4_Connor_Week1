@@ -89,7 +89,25 @@ class OutputViewTest {
     @Test
     void 출력_대상은_null일_수_없다() {
         // expected
-        assertThatThrownBy(() -> new OutputView(null))
-                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> {
+            try (OutputView ignored = new OutputView(null)) {
+                ignored.getClass();
+            }
+        }).isInstanceOf(NullPointerException.class);
+    }
+
+    @Test
+    void 닫으면_애니메이션_플레이어를_종료한다() {
+        // given
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        AnimationPlayer animationPlayer = new AnimationPlayer(new PrintStream(output), true, 0L);
+        OutputView outputView = new OutputView(new PrintStream(output), animationPlayer);
+
+        // when
+        outputView.close();
+        animationPlayer.play("default").join();
+
+        // then
+        assertTrue(output.toString().isEmpty());
     }
 }
