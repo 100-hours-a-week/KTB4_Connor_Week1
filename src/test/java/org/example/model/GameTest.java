@@ -1,12 +1,12 @@
 package org.example.model;
 
+import org.example.dto.MonsterAttackResult;
 import org.example.dto.TurnResult;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-import java.util.Set;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,17 +41,47 @@ class GameTest {
         Game game = game();
 
         // when
-        TurnResult result = game.playTurn(ATTACK);
+        TurnResult result = game.playTurn(ATTACK).orElseThrow();
 
         // then
         assertAll(
                 () -> assertEquals(ATTACK, result.playerAction()),
                 () -> assertEquals(25, result.monsterDamageTaken()),
-                () -> assertTrue(Set.of(0, 20).contains(result.playerDamageTaken())),
-                () -> assertEquals(result.playerDamageTaken() > 0, result.monsterAttacked()),
                 () -> assertFalse(result.monsterDefeated()),
                 () -> assertEquals(40 - result.monsterDamageTaken(), game.monster().hp()),
-                () -> assertEquals(180 - result.playerDamageTaken(), game.player().hp())
+                () -> assertEquals(180, game.player().hp())
+        );
+    }
+
+    @Test
+    void 몬스터_자동_공격은_플레이어_체력을_감소시킨다() {
+        // given
+        Game game = Game.start(new Warrior(), new AlwaysAttackStageManager());
+
+        // when
+        MonsterAttackResult result = game.automaticAttack().orElseThrow();
+
+        // then
+        assertAll(
+                () -> assertEquals(20, result.playerDamageTaken()),
+                () -> assertEquals(160, result.playerHp()),
+                () -> assertEquals(160, game.player().hp())
+        );
+    }
+
+    @Test
+    void 종료된_전투에서는_더_이상_공격하지_않는다() {
+        // given
+        Game defeatedPlayerGame = Game.start(new Warrior(), new AlwaysAttackStageManager());
+        defeatedPlayerGame.player().damage(defeatedPlayerGame.player().hp());
+        Game clearedGame = game();
+        clearedGame.monster().damage(clearedGame.monster().hp());
+
+        // expected
+        assertAll(
+                () -> assertTrue(defeatedPlayerGame.playTurn(SKILL).isEmpty()),
+                () -> assertTrue(defeatedPlayerGame.automaticAttack().isEmpty()),
+                () -> assertTrue(clearedGame.automaticAttack().isEmpty())
         );
     }
 
@@ -61,7 +91,7 @@ class GameTest {
         Game game = game();
 
         // when
-        TurnResult result = game.playTurn(DEFEND);
+        TurnResult result = game.playTurn(DEFEND).orElseThrow();
 
         // then
         assertAll(
@@ -77,7 +107,7 @@ class GameTest {
         Game game = Game.start(new Mage(), new NoAttackStageManager());
 
         // when
-        TurnResult result = game.playTurn(SKILL);
+        TurnResult result = game.playTurn(SKILL).orElseThrow();
 
         // then
         assertAll(
@@ -161,6 +191,26 @@ class GameTest {
         @Override
         public Monster create(final Stage stage) {
             return new Monster("테스트 몬스터", 40, 20);
+        }
+    }
+
+    private static class AlwaysAttackStageManager extends MonsterFactory {
+        @Override
+        public Monster create(final Stage stage) {
+            return new AlwaysAttackMonster("테스트 몬스터", 40, 20);
+        }
+    }
+
+    private static class AlwaysAttackMonster extends Monster {
+        private AlwaysAttackMonster(final String name,
+                                    final int hp,
+                                    final int attack) {
+            super(name, hp, attack);
+        }
+
+        @Override
+        public int attack(final AttackStrategy strategy) {
+            return attack();
         }
     }
 }

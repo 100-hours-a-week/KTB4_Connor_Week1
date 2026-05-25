@@ -2,10 +2,12 @@ package org.example.model;
 
 import lombok.Getter;
 import lombok.experimental.Accessors;
+import org.example.dto.MonsterAttackResult;
 import org.example.dto.TurnResult;
 import org.example.model.vo.BattleOption;
 
 import java.util.Objects;
+import java.util.Optional;
 
 @Getter
 @Accessors(fluent = true)
@@ -30,43 +32,48 @@ public class Game {
         return new Game(player, stageManager);
     }
 
-    public TurnResult playTurn(final BattleOption battleOption) {
+    public synchronized Optional<TurnResult> playTurn(final BattleOption battleOption) {
+        if (isOver() || isClear()) {
+            return Optional.empty();
+        }
         if (!player.canPerform(battleOption)) {
             throw new IllegalArgumentException("플레이어가 수행할 수 없는 행동입니다.");
         }
+
         final int monsterDamageTaken = player.damageFor(battleOption);
         monster.damage(monsterDamageTaken);
 
-        if (!monster.isAlive()) {
-            return createTurnResult(battleOption, monsterDamageTaken, 0, false, true);
+        return Optional.of(createTurnResult(battleOption, monsterDamageTaken, !monster.isAlive()));
+    }
+
+    public synchronized Optional<MonsterAttackResult> automaticAttack() {
+        if (isOver() || isClear()) {
+            return Optional.empty();
         }
+
         final int playerDamageTaken = monster.attack(attackStrategy);
         player.damage(playerDamageTaken);
 
-        return createTurnResult(battleOption, monsterDamageTaken, playerDamageTaken, playerDamageTaken > 0, false);
+        return Optional.of(MonsterAttackResult.of(player, monster, playerDamageTaken));
     }
 
     private TurnResult createTurnResult(final BattleOption battleOption,
                                         final int monsterDamageTaken,
-                                        final int playerDamageTaken,
-                                        final boolean monsterAttacked,
                                         final boolean monsterDefeated) {
         return TurnResult.of(
                 battleOption,
                 player,
                 monster,
                 monsterDamageTaken,
-                playerDamageTaken,
-                monsterAttacked,
                 monsterDefeated
         );
     }
 
-    public boolean isOver() {
+    public synchronized boolean isOver() {
         return !player.isAlive();
     }
 
-    public boolean isClear() {
+    public synchronized boolean isClear() {
         return !monster.isAlive();
     }
 
@@ -74,7 +81,7 @@ public class Game {
         return stage.value();
     }
 
-    public void nextStage() {
+    public synchronized void nextStage() {
         if (monster.isAlive()) {
             throw new IllegalStateException("스테이지를 클리어해야 다음 스테이지로 이동할 수 있습니다.");
         }

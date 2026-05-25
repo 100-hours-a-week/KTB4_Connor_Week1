@@ -1,5 +1,6 @@
 package org.example.view.out;
 
+import org.example.dto.MonsterAttackResult;
 import org.example.dto.TurnResult;
 
 import java.io.PrintStream;
@@ -66,10 +67,20 @@ public class OutputView implements AutoCloseable {
             return;
         }
 
-        joiner.add(monsterActionMessage(result))
-                .add("현재 체력")
+        joiner.add("현재 체력")
                 .add("- " + result.playerName() + ": " + result.playerHp() + "/" + result.playerMaxHp())
                 .add("- " + result.monsterName() + ": " + result.monsterHp());
+
+        print(joiner.toString());
+    }
+
+    public void printMonsterAttackResult(final MonsterAttackResult result) {
+        StringJoiner joiner = new StringJoiner(System.lineSeparator());
+        joiner.add("")
+                .add("[몬스터 공격]")
+                .add(monsterAttackMessage(result))
+                .add("현재 체력")
+                .add("- " + result.playerName() + ": " + result.playerHp() + "/" + result.playerMaxHp());
 
         print(joiner.toString());
     }
@@ -107,16 +118,14 @@ public class OutputView implements AutoCloseable {
         };
     }
 
-    private String monsterActionMessage(final TurnResult result) {
-        if (result.monsterAttacked()) {
-            printActionAnimation("attack");
-            return result.monsterName() + "의 반격 - "
+    private String monsterAttackMessage(final MonsterAttackResult result) {
+        if (result.playerDamageTaken() > 0) {
+            return result.monsterName() + "의 공격 - "
                     + result.playerName() + "에게 "
                     + result.playerDamageTaken() + " 피해";
         }
 
-        printActionAnimation("avoid");
-        return result.monsterName() + "의 공격를 피했습니다.";
+        return result.monsterName() + "의 공격을 피했습니다.";
     }
 
     private void printActionAnimation(final String action) {

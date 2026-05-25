@@ -1,7 +1,6 @@
 package org.example.controller;
 
 import org.example.dto.GameMenuOption;
-import org.example.dto.TurnResult;
 import org.example.model.Game;
 import org.example.model.MonsterFactory;
 import org.example.model.Player;
@@ -11,30 +10,37 @@ import org.example.view.in.InputView;
 import org.example.view.out.OutputView;
 
 public class GameController {
+    private static final long DEFAULT_MONSTER_ATTACK_INTERVAL_MILLIS = 2_000L;
+
     private final InputView inputView;
     private final OutputView outputView;
     private final PlayerFactory playerFactory;
     private final MonsterFactory stageManager;
+    private final long monsterAttackIntervalMillis;
 
     public GameController(final InputView inputView,
                           final OutputView outputView) {
-        this(inputView, outputView, new PlayerFactory(), new MonsterFactory());
+        this(inputView, outputView, new PlayerFactory(), new MonsterFactory(), DEFAULT_MONSTER_ATTACK_INTERVAL_MILLIS);
     }
 
-    public GameController(final InputView inputView,
-                          final OutputView outputView,
-                          final MonsterFactory stageManager) {
-        this(inputView, outputView, new PlayerFactory(), stageManager);
+
+    GameController(final InputView inputView,
+                   final OutputView outputView,
+                   final MonsterFactory stageManager,
+                   final long monsterAttackIntervalMillis) {
+        this(inputView, outputView, new PlayerFactory(), stageManager, monsterAttackIntervalMillis);
     }
 
-    public GameController(final InputView inputView,
-                          final OutputView outputView,
-                          final PlayerFactory playerFactory,
-                          final MonsterFactory stageManager) {
+    private GameController(final InputView inputView,
+                           final OutputView outputView,
+                           final PlayerFactory playerFactory,
+                           final MonsterFactory stageManager,
+                           final long monsterAttackIntervalMillis) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.playerFactory = playerFactory;
         this.stageManager = stageManager;
+        this.monsterAttackIntervalMillis = monsterAttackIntervalMillis;
     }
 
     public void run() {
@@ -46,12 +52,16 @@ public class GameController {
         while (!game.isOver()) {
             outputView.printStageStart(game.currentStage());
 
-            while (!game.isOver() && !game.isClear()) {
-                final Player player = game.player();
-                final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
+            final Thread monsterAttackThread = startMonsterAttackThread(game);
+            try {
+                while (!game.isOver() && !game.isClear()) {
+                    final Player player = game.player();
+                    final BattleOption option = inputView.inputBattleOption(player.availableBattleOptions());
 
-                final TurnResult result = game.playTurn(option);
-                outputView.printTurnResult(result);
+                    game.playTurn(option).ifPresent(outputView::printTurnResult);
+                }
+            } finally {
+                stopMonsterAttackThread(monsterAttackThread);
             }
 
             if (game.isOver()) {
@@ -61,6 +71,32 @@ public class GameController {
 
             outputView.printStageClear(game.monster().name());
             game.nextStage();
+        }
+    }
+
+    private Thread startMonsterAttackThread(final Game game) {
+        Thread thread = new Thread(() -> attackAutomatically(game), "monster-attack");
+        thread.start();
+        return thread;
+    }
+
+    private void attackAutomatically(final Game game) {
+        try {
+            while (!game.isOver() && !game.isClear()) {
+                Thread.sleep(monsterAttackIntervalMillis);
+                game.automaticAttack().ifPresent(outputView::printMonsterAttackResult);
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+    private void stopMonsterAttackThread(final Thread monsterAttackThread) {
+        monsterAttackThread.interrupt();
+        try {
+            monsterAttackThread.join();
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
         }
     }
 

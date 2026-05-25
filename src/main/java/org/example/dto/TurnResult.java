@@ -14,8 +14,6 @@ public record TurnResult(
         String playerName,
         String monsterName,
         int monsterDamageTaken,
-        int playerDamageTaken,
-        boolean monsterAttacked,
         boolean monsterDefeated,
         boolean playerDefeated,
         int playerHp,
@@ -26,8 +24,6 @@ public record TurnResult(
                                 final Player player,
                                 final Monster monster,
                                 final int monsterDamageTaken,
-                                final int playerDamageTaken,
-                                final boolean monsterAttacked,
                                 final boolean monsterDefeated) {
         Player safePlayer = Objects.requireNonNull(player);
         Monster safeMonster = Objects.requireNonNull(monster);
@@ -37,8 +33,6 @@ public record TurnResult(
                 .playerName(safePlayer.name())
                 .monsterName(safeMonster.name())
                 .monsterDamageTaken(monsterDamageTaken)
-                .playerDamageTaken(playerDamageTaken)
-                .monsterAttacked(monsterAttacked)
                 .monsterDefeated(monsterDefeated)
                 .playerDefeated(!safePlayer.isAlive())
                 .playerHp(safePlayer.hp())
