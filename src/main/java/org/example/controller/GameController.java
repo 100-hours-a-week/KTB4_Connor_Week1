@@ -81,6 +81,7 @@ public class GameController {
     }
 
     private void attackAutomatically(final Game game) {
+        // NOTE: ScheduledExecutorService으로 스케줄링 관리 개선 필요
         try {
             while (!game.isOver() && !game.isClear()) {
                 Thread.sleep(monsterAttackIntervalMillis);
