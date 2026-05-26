@@ -6,12 +6,10 @@ import org.example.view.out.OutputView;
 
 public class Main {
     public static void main(String[] args) {
-        try (OutputView outputView = new OutputView()) {
-            final GameController controller = new GameController(
-                    new InputView(),
-                    outputView
-            );
-            controller.run();
-        }
+        final GameController controller = new GameController(
+                new InputView(),
+                new OutputView()
+        );
+        controller.run();
     }
 }

@@ -7,7 +7,7 @@ import java.io.PrintStream;
 import java.util.Objects;
 import java.util.StringJoiner;
 
-public class OutputView implements AutoCloseable {
+public class OutputView {
 
     private static final String LINE = "==============================";
 
@@ -129,11 +129,6 @@ public class OutputView implements AutoCloseable {
     }
 
     private void printActionAnimation(final String action) {
-        animationPlayer.play(action).join();
-    }
-
-    @Override
-    public void close() {
-        animationPlayer.shutdown();
+        animationPlayer.play(action);
     }
 }

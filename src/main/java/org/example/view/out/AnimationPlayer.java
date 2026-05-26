@@ -7,9 +7,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class AnimationPlayer {
     private static final String HIDE_CURSOR = "\033[?25l";
@@ -20,7 +17,6 @@ public class AnimationPlayer {
     private static final long DEFAULT_ANIMATION_DELAY_MILLIS = 400L;
 
     private final PrintStream printStream;
-    private final ExecutorService executorService;
     private final boolean animationEnabled;
     private final long delayMillis;
 
@@ -35,23 +31,14 @@ public class AnimationPlayer {
         this.printStream = Objects.requireNonNull(printStream);
         this.animationEnabled = animationEnabled;
         this.delayMillis = delayMillis;
-        this.executorService = Executors.newSingleThreadExecutor(runnable -> {
-            Thread thread = new Thread(runnable, "animation-player");
-            thread.setDaemon(true);
-            return thread;
-        });
     }
 
-    public CompletableFuture<Void> play(final String action) {
-        if (!animationEnabled || executorService.isShutdown()) {
-            return CompletableFuture.completedFuture(null);
+    public void play(final String action) {
+        if (!animationEnabled) {
+            return;
         }
 
-        return CompletableFuture.runAsync(() -> printAnimation(action), executorService);
-    }
-
-    public void shutdown() {
-        executorService.shutdown();
+        printAnimation(action);
     }
 
     private void printAnimation(final String action) {
